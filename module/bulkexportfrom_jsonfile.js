@@ -2,15 +2,14 @@ let fs=require("fs");
 var dataAccessLayerbulkexport=require("../dataAccessLayer/bulkexport");
 
 function transferdata(path,index,type){
-	return new Promise(function(response,reject){
+	return new Promise(function(resolve,reject){
 		fs.readFile(path,'utf8',function(err,data){
 			data=JSON.parse(data);
 			
 			console.log("file read");
 			preparedataforExport(data,index,type).then(dataarry=>{
-				//console.log("dataarry",dataarry[0]);
 				calldataAccesslayerforExport(dataarry).then(result=>{
-					response("true");
+					resolve(result);
 				},err=>{
 					console.log("error occured in data fire");
 				});
@@ -23,18 +22,18 @@ function transferdata(path,index,type){
 
 
 function preparedataforExport(data,indexname,type){
-	return new Promise(function(response,reject){
+	return new Promise(function(resolve,reject){
 		var bulkbody=[];
 		var preparedata=function(){
 
-			for(var i=0;i<10;i++){
+			for(var i=0;i<data.length;i++){
 				var item=data[i];
 				bulkbody.push({"index":{
-					"_id":item.id,
+					"_id":item._key,
 					"_index":indexname,
 					"_type":type
 				}});
-
+				delete item._id;
 				bulkbody.push(item);
 				
 			}
@@ -42,20 +41,21 @@ function preparedataforExport(data,indexname,type){
 		//console.log("before");
 		preparedata();
 		//console.log("after",bulkbody[0]);
-		response(bulkbody);
+		resolve(bulkbody);
 	});
 }
 
 
 function calldataAccesslayerforExport(data){
-	return new Promise(function(response,reject){
+	return new Promise(function(resolve,reject){
 
-		// fs.writeFile("./jsonfiles/data1.json", JSON.stringify(data),"utf8",function(err,data){
-		// });
+		
 		
 		dataAccessLayerbulkexport.bulkexport(data)
 		.then(result=>{
-			response("success in preparedataforExport");
+			fs.writeFile("./jsonfiles/data1.json", JSON.stringify(result),"utf8",function(err,data){
+			});
+			resolve(result);
 		},err=>{
 			reject("err occured in preparedataforExport");
 		})
