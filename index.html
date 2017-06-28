@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<base href="/">
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="bower_components/elasticsearch/elasticsearch.angular.min.js"></script>
+	<script type="text/javascript" src="javascript/index.js"></script>
+</head>
+<body>
+	<div ng-app="myOpenRecipes" ng-controller="recipeCtrl">
+
+  <!-- The search box puts the term into $scope.searchTerm
+  and calls $scope.search() on submit -->
+  <section class="searchField">
+  	<form ng-submit="search()">
+  		<input type="text" ng-model="searchTerm">
+  		<input type="submit" value="Search for recipes">
+  	</form>
+  </section>
+
+  <!-- In results, we show a message if there are no results, and
+  a list of results otherwise. -->
+  <section class="results">
+  	<div class="no-recipes" ng-hide="recipes.length">No results</div>
+
+    <!-- We show one of these elements for each recipe in $scope.recipes.
+    The ng-cloak directive prevents our templates from showing on load. -->
+    <article class="recipe" ng-repeat="recipe in recipes" ng-cloak>
+    	<h2>
+    		<a ng-href="{{recipe.url}}">{{recipe.name}}</a>
+    	</h2>
+    	<ul>
+    		<li ng-repeat="ingredient in recipe.ingredients">{{ ingredient }}</li>
+    	</ul>
+
+    	<p>
+    		{{recipe.description}}
+    		<a ng-href="{{recipe.url}}">... more at {{recipe.source}}</a>
+    	</p>
+    </article>
+
+    <!-- We put a link that calls $scope.loadMore to load more recipes
+    and append them to the results.-->
+    <div class="load-more" ng-hide="allResults" ng-cloak>
+    	<a ng-click="loadMore()">More...</a>
+    </div>
+</section>
+</body>
+</html>
