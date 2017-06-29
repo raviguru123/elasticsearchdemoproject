@@ -1,4 +1,4 @@
-window.MyOpenRecipes = angular.module('myOpenRecipes', ['elasticsearch'],
+var MyOpenRecipes = angular.module('myOpenRecipes', ['elasticsearch'],
 	['$locationProvider', function($locationProvider) {
 		$locationProvider.html5Mode(true);
 	}]
@@ -62,7 +62,11 @@ MyOpenRecipes.controller('recipeCtrl', ['recipeService', '$scope', '$location', 
 }]);
 
 
+
+
+
 MyOpenRecipes.factory('recipeService', ['$q', 'esFactory', '$location', function($q, elasticsearch, $location) {
+	
 	var client = elasticsearch({
 		host: $location.host() + ':9200'
 	});
@@ -81,8 +85,8 @@ MyOpenRecipes.factory('recipeService', ['$q', 'esFactory', '$location', function
    	};
 
    	client.search({
-   		index: 'library',
-   		type: 'article',
+   		index: 'bank1',
+   		type: 'account',
    		body: {
    			size: 10,
    			from: (offset || 0) * 10,

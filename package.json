@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/raviguru123/elasticsearchdemoproject#readme",
   "dependencies": {
+    "arangojs": "^5.6.1",
     "elasticsearch": "^13.2.0",
     "es": "^0.5.2",
     "fs": "0.0.1-security",
