@@ -33,7 +33,7 @@
 
 	<ul style="list-style: none">
 		<li class="card" ng-repeat="card in cards track by $index">
-			<img style="width: 100%;height: 100%" src="https://scontent.xx.fbcdn.net/v/t31.0-8/s720x720/19442086_1015893551847774_7148495254265806741_o.jpg?oh=05e582382fd58fa9d75f24eff0827619&oe=5A0BE1B8">
+			<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}">
 			{{$index}}
 		</li>
 	</ul>

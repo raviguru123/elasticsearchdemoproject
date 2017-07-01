@@ -1,6 +1,7 @@
 
 let bulkexportobj=require("./module/bulkexportfrom_jsonfile"),
 IMPORTANDEXPORTDATA=require("./module/importandexportdata"),
+APISEARCH=require("./apisearch");
 http=require("http"),
 port=3000;
 
@@ -24,12 +25,14 @@ function requestHandler(req, res, next){
 		res.end(/* icon content here */);
 	} else {
 		console.log("yes",req.url);
-		res.end(JSON.stringify([1,2,3,4,5,6,7,8,9,10]));
-		// if ( req.method === 'OPTIONS' ) {
-		// 	res.writeHead(200);
-		// 	res.end("hello 123");
-		// 	return;
-		// }
+		//res.end(JSON.stringify([1,2,3,4,5,6,7,8,9,10]));
+		APISEARCH.getdata("hello").then(result=>{
+			res.end(JSON.stringify(result));
+		},err=>{
+			res.end(JSON.stringify(err));
+		})
+		
+
 	}
 }
 

@@ -9,7 +9,6 @@ app.controller('searchController', ['$scope','httpService','$location','$httpPar
 		$scope.getdataService=function(data){
 			var obj={};
 			obj=Object.assign({},data);
-
 			httpService.getdata(obj).then(function(results) {
 				console.log("results",results);
 				if (results.length !== 10) {
