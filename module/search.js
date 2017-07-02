@@ -56,7 +56,7 @@ let scroll=function(data){
 
 
 let autocomplete=function(data){
-	console.log("data.query",data.query);
+	//console.log("data.query",data.query);
 	return new Promise(function(resolve,reject){
 		client.search({
 			body:{
@@ -94,7 +94,7 @@ let autocomplete=function(data){
 
 function preparedata(data){
 	return new Promise(function(resolve,reject){
-		console.log("prepare data function call");
+		//console.log("prepare data function call");
 		var suggesations=[];
 		data.forEach(function(item,index){
 

@@ -10,9 +10,12 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			var obj={};
 			obj=Object.assign({},data);
 			obj.scrollId=_scroll_id;
+			console.log("obj",obj);
 			httpService.getdata(obj).then(function(results){
 				// console.log("result from search request",results);
 				_scroll_id=results._scroll_id;
+				results.hits=results.hits||{};
+				results.hits.hits=results.hits.hits||[];
 				results=results.hits.hits;
 				if (results.length !== 10) {
 					$scope.allResults = true;
@@ -59,12 +62,10 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
            function querySearch (query) {
            	var results = query ? loadStates().filter(createFilterFor(query)) :loadStates();
-           //	if ($scope.simulateQuery) {
            	deferred = $q.defer();
-
            	httpService.autocomplete(query).then(function(response){
            		deferred.resolve(response);
-           		console.log("response come from autocomplete",response);
+           		//console.log("response come from autocomplete",query,response);
            	},function(resolve){
 
            	});
@@ -81,11 +82,15 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
  }
 
  function searchTextChange(text) {
+ 	//$scope.searchobj.text=text;
+ 	//$scope.search({"text":text});
  	//$log.info('Text changed to ' + text);
  }
 
  function selectedItemChange(item) {
- 	//$log.info('Item changed to ' + JSON.stringify(item));
+ 	item=item||{};
+ 	$log.info('Item changed to ' + JSON.stringify(item));
+ 	$scope.search({"text":item.display});
  }
 
 
@@ -143,7 +148,7 @@ app.factory('httpService', ['$http','$q','$httpParamSerializer',
 		obj.getdata=function(data){
 			var defer=$q.defer();
 			var url="http://localhost:3000/search?"+$httpParamSerializer(data);
-			if(cache[url]==undefined){
+			//if(cache[url]==undefined){
 				$http.get(url).then(function(response){
 					cache[url]=response.data;
 					defer.resolve(response.data);
@@ -151,12 +156,12 @@ app.factory('httpService', ['$http','$q','$httpParamSerializer',
 					defer.reject(reason);
 				});
 				
-			}
+			// }
 
-			else
-			{
-				defer.resolve(cache[url]);
-			}
+			// else
+			// {
+			// 	defer.resolve(cache[url]);
+			// }
 
 			return defer.promise;
 		}
