@@ -1,0 +1,1019 @@
+GET goparties/_search
+{
+"_source":["title","name","about","address","profile_type"],
+"query": {
+"multi_match": {
+"query": "party spot",
+"type": "best_fields",
+"fields": [
+"title",
+"name",
+"about",
+"profile_type", 
+"address"
+],
+
+}
+}
+}
+
+PUT /goparties/_mapping/party
+{
+"party": {
+"properties": {
+"title": {
+"type": "text",
+"analyzer": "autocomplete"
+}
+}
+}
+}
+
+
+
+GET /goparties/_search
+{
+"_source": ["name"],
+"query": {
+"multi_match": {
+"query": "party",
+"type": "best_fields",
+"fields": [
+"title",
+"profile_type",
+"name",
+"address"
+]
+}
+},
+"highlight": {
+"fields": {
+"title": {},
+"name": {},
+"about": {},
+"profile_type": {}
+}
+}
+}
+
+
+
+
+PUT /goparties
+{
+"settings": {
+"analysis": {
+"filter": {
+"autocomplete_filter": { 
+"type":     "edge_ngram",
+"min_gram": 3,
+"max_gram": 20
+}
+},
+"analyzer": {
+"autocomplete": {
+"type":      "custom",
+"tokenizer": "standard",
+"filter": [
+"lowercase",
+"autocomplete_filter" 
+]
+}
+}
+}
+}
+}
+
+
+DELETE goparties
+
+
+
+GET goparties/_search
+{
+"_source":["title","name","about","address","profile_type"],
+"query": {
+"multi_match": {
+"query": "party spot",
+"type": "best_fields",
+"fields": [
+"title",
+"name",
+"about",
+"profile_type", 
+"address"
+],
+
+}
+}
+}
+
+PUT /goparties/_mapping/party
+{
+"party": {
+"properties": {
+"title": {
+"type": "text",
+"analyzer": "autocomplete"
+}
+}
+}
+}
+
+
+GET /goparties/_search
+{
+"_source":["title","name","about","address"],
+"query": {
+"multi_match": {
+"query":"party spot",
+"type": "best_fields",
+"fields": [
+"title",
+"profile_type",
+"name",
+"address"
+]
+}
+}
+}
+
+
+
+
+GET goparties/_search
+{
+"_source":["title","name","about","address","profile_type"],
+"query": {
+"multi_match": {
+"query": "party spot",
+"type": "best_fields",
+"fields": [
+"title",
+"name",
+"about",
+"profile_type", 
+"address"
+]
+}
+}
+}
+
+
+
+
+
+,
+"highlight": {
+"fields": {
+"title": {"fragment_size": 20},
+"name": {},
+"about": {},
+"address": {}
+}
+}
+_source_include=title,name,about,address
+
+{
+"query": {
+"match": {
+"fileName": "a"
+}
+},
+"highlight" : {
+"fields" : {
+"fileName" : {"force_source" : true}
+}
+}
+}
+
+
+POST  /_search/scroll 
+{
+"scroll" : "1m", 
+"scroll_id" : "DXF1ZXJ5QW5kRmV0Y2gBAAAAAAAAAD4WYm9laVYtZndUQlNsdDcwakFMNjU1QQ==" 
+}
+
+
+
+GET /goparties/_search?scroll=1m 
+{
+"query": {
+"match_all": {}
+},
+"size": 1000
+}
+
+
+GET /_search/scroll
+{
+"scroll": "1m", 
+"scroll_id" : "DnF1ZXJ5VGhlbkZldGNoBQAAAAAAADboFnM0TXZnMHpfVE1xZXZyajJ3WjhaalEAAAAAAAA25xZzNE12ZzB6X1RNcWV2cmoyd1o4WmpRAAAAAAAANusWczRNdmcwel9UTXFldnJqMndaOFpqUQAAAAAAADbpFnM0TXZnMHpfVE1xZXZyajJ3WjhaalEAAAAAAAA26hZzNE12ZzB6X1RNcWV2cmoyd1o4WmpR"
+}
+
+
+GET _search/scroll/DnF1ZXJ5VGhlbkZldGNoBQAAAAAAADU-FnM0TXZnMHpfVE1xZXZyajJ3WjhaalEAAAAAAAA1QRZzNE12ZzB6X1RNcWV2cmoyd1o4WmpRAAAAAAAANT0WczRNdmcwel9UTXFldnJqMndaOFpqUQAAAAAAADVAFnM0TXZnMHpfVE1xZXZyajJ3WjhaalEAAAAAAAA1PxZzNE12ZzB6X1RNcWV2cmoyd1o4WmpR?scroll=10m
+
+
+DELETE goparties
+
+GET /goparties/profile/_count?q=*
+GET /goparties/party/_count?q=*
+
+
+
+DELETE goparties
+
+GET company/branch/_search
+{
+"size":0, 
+"aggs": {
+"branches": {
+"terms": {
+"field": "country"
+},
+"aggs": {
+"employees": {
+"children": {
+"type": "employee"
+},
+"aggs": {
+"hobbies": {
+"terms": {
+"field": "hobby"
+}
+}
+}
+}
+}
+}
+}
+}
+
+
+PUT company/_mapping/employee
+{
+"properties": {
+"hobby": { 
+"type":     "text"
+, "fielddata":true
+
+}
+}
+}
+
+GET /company/branch/_search
+{
+"size" : 0,
+"aggs": {
+"country": {
+"terms": { 
+"field": "country"
+},
+"aggs": {
+"employees": {
+"children": { 
+"type": "employee"
+}
+}
+}
+}
+}
+}
+
+
+PUT company/_mapping/employee
+{
+"properties": {
+"hobby": { 
+"type":     "text",
+"fielddata": true
+}
+}
+}
+
+
+
+
+GET company/branch/_search
+{
+"query": {
+"match_all": {}
+}
+}
+
+GET /company/employee/_search
+{
+"query": {
+"has_parent": {
+"parent_type": "branch",
+"query": {
+"match": {
+"country": "uk"
+}
+}
+}
+}
+}
+
+
+GET /company/branch/_search
+{
+"query": {
+"has_child": {
+"type": "employee",
+"query": {
+"range": {
+"dob": {
+"gte":"1950-01-01"
+}
+}
+}
+}
+}
+}
+
+GET /company/branch/_search
+{
+"query": {
+"has_child": {
+"type": "employee",
+"query": {
+"range": {
+"dob": {
+"gte": "1980-01-01"
+}
+}
+}
+}
+}
+}
+
+
+
+PUT /company
+{
+"mappings": {
+"branch":{},
+"employee":{
+"_parent": {
+"type": "branch"
+}
+}
+}
+}
+
+
+
+
+
+POST /company/employee/_bulk
+{ "index": { "_id": 2, "parent": "london" }}
+{ "name": "Mark Thomas", "dob": "1982-05-16", "hobby": "diving" }
+{ "index": { "_id": 3, "parent": "liverpool" }}
+{ "name": "Barry Smith", "dob": "1979-04-01", "hobby": "hiking" }
+{ "index": { "_id": 4, "parent": "paris" }}
+{ "name": "Adrien Grand", "dob": "1987-05-11", "hobby": "horses" }
+
+PUT my_index
+{
+"mappings": {
+"blogpost": {
+"properties": {
+"user": {
+"properties": {
+"name": {
+"type": "text",
+"fields": {
+"raw": {
+"type": "keyword",
+"index": true
+}
+}
+}
+}
+}
+}
+}
+}
+}
+
+GET my_index/blogpost/_search
+{
+"query": {
+"bool": {
+"must": [
+{"match":{"title":"relationships"}},
+{"match": {
+"user.name": "john"
+}}
+]
+}
+},
+"aggs": {
+"users": {
+"terms": {
+"field": "user.name.raw"
+, "order": {
+"_term": "desc"
+}},
+"aggs": {
+"top_result": {
+"max": {
+"script": "_score"
+}
+},
+"blogposts":{"top_hits": {
+"_source":"title",
+"size": 5
+}}
+}
+}
+
+}
+}
+
+
+
+PUT /my_index/user/1
+{
+"name": "John Smith",
+"email": "john@smith.com",
+"dob": "1970/10/24"
+}
+
+PUT /my_index/blogpost/2
+{
+"title": "Relationships",
+"body": "It's complicated...",
+"user": {
+"id": 1,
+"name": "John Smith"
+}
+}
+
+PUT /my_index/user/3
+{
+"name": "Alice John",
+"email": "alice@john.com",
+"dob": "1979/01/04"
+}
+
+PUT /my_index/blogpost/4
+{
+"title": "Relationships are cool",
+"body": "It's not complicated at all...",
+"user": {
+"id": 3,
+"name": "Alice John"
+}
+}
+
+
+DELETE my_index
+
+PUT cars/_mapping/transactions
+{
+"properties": {
+"color": { 
+"type":     "text",
+"fielddata": true
+}
+}
+}
+
+
+DELETE my_index
+
+PUT /attractions/
+{
+"mappings": {
+"restaurant": {
+"dynamic": true,
+"properties": {
+"name": {
+"type": "text"
+},
+"location": {
+"type": "geo_point"
+}
+}
+}
+}
+}
+
+
+
+DELETE my_index
+
+GET /attractions/restaurant/_search
+{
+"size": 0,
+"query": {
+"constant_score": {
+"filter": {
+"geo_bounding_box": {
+"location": {
+"top_left": {
+"lat": 40.8,
+"lon": -74.1
+},
+"bottom_right": {
+"lat": 40.4,
+"lon": -73.7
+}
+}
+}
+}
+}
+},
+"aggs": {
+"new_york_data": {
+"geohash_grid": {
+"field": "location",
+"precision": 5
+}
+},
+"map_zoom": {
+"geo_bounds": {
+"field": "location"
+}
+}
+}
+}
+
+
+
+GET /attractions/restaurant/_search
+{
+"query": {
+"bool": {
+"must": [
+{
+"match": {
+"name": "pizza"
+}
+}
+],
+"filter": {
+"geo_bounding_box": {
+"location": {
+"top_left": {
+"lat": 40.8,
+"lon": -74.1
+},
+"bottom_right": {
+"lat": 40.4,
+"lon": -73.7
+}
+}
+}
+}
+}
+},
+"aggs": {
+"per_ring": {
+"geo_distance": {
+"field": "location",
+"origin": {
+"lat": 40.712,
+"lon": -73.988
+},
+"ranges": [
+{
+"from": 0,
+"to": 1
+},
+{
+"from": 1,
+"to": 2
+}
+]
+}
+}
+},
+"post_filter": {
+"geo_distance": {
+"distance": "1km",
+"location": {
+"lat": 40.712,
+"lon": -73.988
+}
+}
+}
+}
+
+
+
+
+
+
+PUT /attractions/
+{
+"mappings": {
+"restaurant": {
+"dynamic": true,
+"properties": {
+"name": {
+"type": "text"
+},
+"location": {
+"type": "geo_point"
+}
+}
+}
+}
+}
+
+GET attractions/restaurant/_search
+{
+"query": {
+"bool": {
+"filter": {
+"geo_bounding_box": {
+"type": "indexed", 
+"location": {
+"top_left": {
+"lat": 40.8,
+"lon": -74
+},
+"bottom_right": {
+"lat": 40.4,
+"lon": -73
+}
+}
+}
+}
+}
+},
+"sort": [
+{
+"_geo_distance": {
+"location": {
+"lat": 40.715,
+"lon": -73.998
+},
+"order": "desc",
+"unit": "km",
+"distance_type": "plane"
+}
+}
+]
+}
+
+PUT /attractions/restaurant/1
+{
+"name":     "Chipotle Mexican Grill",
+"location": "40.715, -74.011" 
+}
+
+PUT /attractions/restaurant/2
+{
+"name":     "Pala Pizza",
+"location": { 
+"lat":     40.722,
+"lon":    -73.989
+}
+}
+
+PUT /attractions/restaurant/3
+{
+"name":     "Mini Munchies Pizza",
+"location": [ -73.983, 40.719 ] 
+}
+
+
+
+DELETE attractions
+
+PUT /attractions
+{
+"mappings": {
+"restaurant": {
+"properties": {
+"name": {
+"type": "string"
+},
+"location": {
+"type":    "geo_point",
+"lat_lon": true 
+}
+}
+}
+}
+}
+
+POST /_snapshot/sigterms/snapshot/_restore
+
+GET /_snapshot/sigterms/_all
+
+PUT /_snapshot/sigterms 
+{
+"type": "url",
+"settings": {
+"url": "http://download.elastic.co/definitiveguide/sigterms_demo/"
+}
+}
+
+GET _snapshot/
+
+GET cars/transactions/_search
+{
+"size": 0,
+"aggs": {
+"distinct_color":{
+"cardinality": {
+"field": "make"
+}
+}
+}
+}
+
+POST /website/logs/_bulk
+{ "index": {}}
+{ "latency" : 100, "zone" : "US", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 80, "zone" : "US", "timestamp" : "2014-10-29" }
+{ "index": {}}
+{ "latency" : 99, "zone" : "US", "timestamp" : "2014-10-29" }
+{ "index": {}}
+{ "latency" : 102, "zone" : "US", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 75, "zone" : "US", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 82, "zone" : "US", "timestamp" : "2014-10-29" }
+{ "index": {}}
+{ "latency" : 100, "zone" : "EU", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 280, "zone" : "EU", "timestamp" : "2014-10-29" }
+{ "index": {}}
+{ "latency" : 155, "zone" : "EU", "timestamp" : "2014-10-29" }
+{ "index": {}}
+{ "latency" : 623, "zone" : "EU", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 380, "zone" : "EU", "timestamp" : "2014-10-28" }
+{ "index": {}}
+{ "latency" : 319, "zone" : "EU", "timestamp" : "2014-10-29" }
+
+
+PUT /cars/
+{
+"mappings": {
+"transactions": {
+"properties": {
+"color": {
+"type": "text",
+"fields": {
+"hash": {
+"type": "murmur3" 
+}
+}
+}
+}
+}
+}
+}
+
+
+GET cars/transactions/_search
+{
+"size":0,
+"aggs": {
+"months":{
+"date_histogram": {
+"field": "sold",
+"interval": "month"
+},
+"aggs": {
+"distinct-color": {
+"cardinality": {
+"field": "color"
+}
+}
+}
+}
+
+}
+}
+
+
+GET cars/transactions/_search
+{
+"size":0,
+"aggs": {
+"all_state": {
+"extended_stats": {
+"field": "price"
+}
+}
+}
+
+}
+
+PUT cars/_mapping/transactions
+{
+"properties": {
+"color": { 
+"type":     "text",
+"fielddata": true
+}
+}
+}
+
+GET cars/transactions/_search
+{
+"query": {
+"constant_score": {
+"filter": {
+"range": {
+"price": {
+"gte": 10000
+}
+}
+}
+}
+},
+"aggs": {
+"single_type_avg": {
+"avg": {
+"field": "price"
+}
+}
+}
+
+}
+
+
+GET cars/transactions/_search?size=0
+{
+"aggs": {
+"interval": {
+"date_histogram": {
+"field": "sold",
+"format": "yyyy-MM-dd",
+"interval": "quarter",
+"min_doc_count": 0,
+"extended_bounds": {
+"min": "2014-01-01",
+"max": "2014-12-31"
+}
+},
+"aggs": {
+"per_make_sum": {
+"terms": {
+"field": "make"
+},
+"aggs": {
+"sum_price": {
+"sum": {
+"field": "price"
+}
+}
+}
+},
+"total_sum":{
+"sum": {
+"field": "price"
+}
+}
+}
+}
+}
+}
+
+
+PUT cars/_mapping/transactions
+{
+"properties": {
+"price": { 
+"type":     "text",
+"fielddata": true
+}
+}
+}
+
+DELETE /cars
+
+POST /cars/transactions/_bulk
+{ "index": {}}
+{ "price" : 10000, "color" : "red", "make" : "honda", "sold" : "2014-10-28" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 30000, "color" : "green", "make" : "ford", "sold" : "2014-05-18" }
+{ "index": {}}
+{ "price" : 15000, "color" : "blue", "make" : "toyota", "sold" : "2014-07-02" }
+{ "index": {}}
+{ "price" : 12000, "color" : "green", "make" : "toyota", "sold" : "2014-08-19" }
+{ "index": {}}
+{ "price" : 20000, "color" : "red", "make" : "honda", "sold" : "2014-11-05" }
+{ "index": {}}
+{ "price" : 80000, "color" : "red", "make" : "bmw", "sold" : "2014-01-01" }
+{ "index": {}}
+{ "price" : 25000, "color" : "blue", "make" : "ford", "sold" : "2014-02-12" }
+
+PUT /my_index
+{
+"settings": {
+"analysis": {
+"filter": {
+"my_filter": {
+"type": "synonym",
+"synonyms": [
+"british,english",
+"queen,monarch"
+]
+}
+},
+"analyzer": {
+"my_synonym":{
+"tokenizer":"standard",
+"filter":["lowercase","my_filter"]
+}
+}
+}
+}
+}
+
+
+GET /my_index/_analyze
+{
+"analyzer": "my_synonym",
+"text": "Elizabeth is the English queen"
+}
+
+DELETE my_index
+
+PUT /my_index
+{
+"mappings": {
+"user": {
+"properties": {
+"name": { 
+"type": "text",
+"fields": {
+"raw": { 
+"type":  "keyword",
+"index": false
+}
+}
+}
+}
+}
+}
+}
+
+
+PUT /my_index/_mapping/user
+{
+"properties": {
+"name": {
+"type": "text",
+"fields": {
+"raw": { 
+"type":     "text",
+"analyzer": "case_insensitive_sort",
+"fielddata": true
+}
+}
+}
+}
+}
+
+PUT /my_index/user/1
+{ "name": "Boffey" }
+
+PUT /my_index/user/2
+{ "name": "BROWN" }
+
+PUT /my_index/user/3
+{ "name": "bailey" }
+
+GET /my_index/user/_search?sort=name.raw
+
+PUT my_index/_mapping/user
+{
+"properties": {
+"name": { 
+"type":     "text",
+"fielddata": true
+}
+}
+}
+
+
+DELETE my_index
+
+PUT /my_index
+{
+"settings": {
+"analysis": {
+"analyzer": {
+"case_insensitive_sort": {
+"tokenizer": "keyword",    
+"filter":  [ "lowercase" ] 
+}
+}
+}
+}
+}
