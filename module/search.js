@@ -60,7 +60,7 @@ let autocomplete=function(data){
 	return new Promise(function(resolve,reject){
 		client.search({
 			body:{
-				"_source": false,
+				"_source": ["title","name","about","profile_type"],
 				"query": {
 					"multi_match": {
 						"query": data.query,
@@ -99,13 +99,11 @@ function preparedata(data){
 		data.forEach(function(item,index){
 
 			let highlight=item.highlight;
-			//console.log("highlight",highlight);
 			for (var key in highlight) {
 				if (highlight.hasOwnProperty(key)) {
 					var val = highlight[key];
-					//console.log("val");
-					
 					suggesations.push({
+						display:item._source[key],
 						value:val[0],
 						watchers:val[0],
 						name:val[0],
