@@ -30,7 +30,7 @@ function requestHandler(req, res, next){
 		
 		let url=URL.parse(req.url, true);
 		//console.log("url",url.path);
-		console.log("queryData",queryData);
+		//console.log("queryData",queryData);
 		if(url.path.indexOf("autocomplete")>0){
 			SEARCH.autocomplete(queryData).then(result=>{
 				res.end(JSON.stringify(result));

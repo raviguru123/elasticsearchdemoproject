@@ -56,18 +56,14 @@ let scroll=function(data){
 
 
 let autocomplete=function(data){
-	data.query=data.query||'party spot';
-
-	console.log("data.keyword",data);
-
+	console.log("data.query",data.query);
 	return new Promise(function(resolve,reject){
-		console.log("autocomplete query hit");
 		client.search({
 			body:{
-				"_source":["title","name","about","address"],
+				"_source": false,
 				"query": {
 					"multi_match": {
-						"query":data.query,
+						"query": data.query,
 						"type": "best_fields",
 						"fields": [
 						"title",
@@ -76,15 +72,56 @@ let autocomplete=function(data){
 						"address"
 						]
 					}
+				},
+				"highlight": {
+					"fields": {
+						"title": {},
+						"name": {},
+						"about": {},
+						"profile_type": {}
+					}
 				}
 			}
-		}).then(function(body){
-			resolve(body);
+		}).then(function(data1){
+			return preparedata(data1.hits.hits);
+		}).then(function(data2){
+			resolve(data2)
 		},function(err){
 			reject(err);
-		});
+		});;
 	})
 }
+
+function preparedata(data){
+	return new Promise(function(resolve,reject){
+		console.log("prepare data function call");
+		var suggesations=[];
+		data.forEach(function(item,index){
+
+			let highlight=item.highlight;
+			//console.log("highlight",highlight);
+			for (var key in highlight) {
+				if (highlight.hasOwnProperty(key)) {
+					var val = highlight[key];
+					//console.log("val");
+					
+					suggesations.push({
+						value:val[0],
+						watchers:val[0],
+						name:val[0],
+						forks:val[0],
+						url:val[0]
+					});
+
+				}
+			}
+		});
+
+		resolve(suggesations);
+	});
+}
+
+
 
 module.exports=
 {

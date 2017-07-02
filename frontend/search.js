@@ -63,20 +63,12 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
            	deferred = $q.defer();
 
            	httpService.autocomplete(query).then(function(response){
+           		deferred.resolve(response);
            		console.log("response come from autocomplete",response);
            	},function(resolve){
 
            	});
-
-           	$timeout(function () { 
-           		deferred.resolve( results ); 
-           	}, 
-           	Math.random() * 1000, false);
            	return deferred.promise;
-           //	} 
-           	// else {
-           	// 	return results;
-           	// }
            }
 
  //filter function for search query
