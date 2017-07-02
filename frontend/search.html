@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html ng-app="search.module">
+<head>
+	<title></title>
+	<style type="text/css">
+		.container{
+			padding-left:200px
+		}
+
+		.card{
+			width: 200px;
+			height: 200px;
+			background-color:green;
+			margin:2px;
+			float: left;
+		}
+		input.text{
+			
+		}
+	</style>
+
+	
+	
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+
+
+	<script type="text/javascript" src="search.js"></script>
+
+
+</head>
+<body ng-controller="searchController">
+
+	<div ng-controller="searchController" layout="column" ng-cloak>
+		<md-content class="md-padding">
+			<form ng-submit="$event.preventDefault()">
+				<p><code>md-autocomplete</code> can be used to provide search results from local or remote data sources.</p>
+				<md-autocomplete
+				ng-disabled="isDisabled"
+				md-no-cache="noCache"
+				md-selected-item="selectedItem"
+				md-search-text-change="searchTextChange(searchText)"
+				md-search-text="searchText"
+				md-selected-item-change="selectedItemChange(item)"
+				md-items="item in querySearch(searchText)"
+				md-item-text="item.name"
+				md-min-length="0"
+				placeholder="US State?">
+  <!--      <md-item-template>
+         <span md-highlight-text="searchText" md-highlight-flags="^i">{{item.name}}</span>
+     </md-item-template> -->
+     <md-item-template>
+     	<span class="item-title">
+     		<md-icon md-svg-icon="img/icons/octicon-repo.svg"></md-icon>
+     		<span> {{item.name}} </span>
+     	</span>
+     	<span class="item-metadata">
+     		<span class="item-metastat">
+     			<strong>{{item.watchers}}</strong> watchers
+     		</span>
+     		<span class="item-metastat">
+     			<strong>{{item.forks}}</strong> forks
+     		</span>
+     	</span>
+     </md-item-template>
+     <md-not-found>
+     	No states matching "{{searchText}}" were found.
+     	<a ng-click="newState(searchText)">Create a new one!</a>
+     </md-not-found>
+ </md-autocomplete>
+ <md-checkbox ng-model="simulateQuery">Show progress for results?</md-checkbox>
+ <md-checkbox ng-model="noCache">Disable caching?</md-checkbox>
+ <md-checkbox ng-model="isDisabled">Disable?</md-checkbox>
+
+
+ <div class="container">
+ 	<h1>Hello this is not using </h1>
+ 	<input ng-model="searchobj.text" style="width: 600px;height: 30px;"type="text" name="search" placeholder="Please Enter Text">
+ 	<input type="button" name="" ng-click="search(searchobj)" value="click me">
+ </div>
+
+ <ul style="list-style: none">
+ 	<li class="card" ng-repeat="card in cards track by $index">
+ 		<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}">
+ 		{{$index}}
+ 	</li>
+ </ul>
+
+ <div scroll-directive="loadMore(searchobj)" infinite-scroll-distance="1.2" style="height: 300px;width: 100%;background-color: green;    float: left;">
+ 	ABCD
+ </div>
+</body>
+</html>

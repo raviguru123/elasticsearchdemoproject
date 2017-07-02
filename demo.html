@@ -1,0 +1,150 @@
+<html lang="en" >
+<head>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+  <script language="javascript">
+    angular
+    .module('firstApplication', ['ngMaterial'])
+    .controller('autoCompleteController', autoCompleteController);
+
+    function autoCompleteController ($timeout, $q, $log) {
+     var self = this;
+     self.simulateQuery = false;
+     self.isDisabled    = false;
+           // list of states to be displayed
+           self.states        = loadStates();
+           self.querySearch   = querySearch;
+           self.selectedItemChange = selectedItemChange;
+           self.searchTextChange   = searchTextChange;
+           self.newState = newState;
+
+           function newState(state) {
+            alert("This functionality is yet to be implemented!");
+          } 
+
+          function querySearch (query) {
+            var results = query ? self.states.filter( createFilterFor(query) ) : self.states, deferred;
+            if (self.simulateQuery) {
+             deferred = $q.defer();
+             $timeout(function () { 
+               deferred.resolve( results ); 
+             }, 
+             Math.random() * 1000, false);
+             return deferred.promise;
+           } else {
+             return results;
+           }
+         }
+
+         function searchTextChange(text) {
+          $log.info('Text changed to ' + text);
+        }
+
+        function selectedItemChange(item) {
+          $log.info('Item changed to ' + JSON.stringify(item));
+        }
+        
+
+        function loadStates() {
+          var repos = [
+          {
+            'name'      : 'Angular 1',
+            'url'       : 'https://github.com/angular/angular.js',
+            'watchers'  : '3,623',
+            'forks'     : '16,175',
+          },
+          {
+            'name'      : 'Angular 2',
+            'url'       : 'https://github.com/angular/angular',
+            'watchers'  : '469',
+            'forks'     : '760',
+          },
+          {
+            'name'      : 'Angular Material',
+            'url'       : 'https://github.com/angular/material',
+            'watchers'  : '727',
+            'forks'     : '1,241',
+          },
+          {
+            'name'      : 'Bower Material',
+            'url'       : 'https://github.com/angular/bower-material',
+            'watchers'  : '42',
+            'forks'     : '84',
+          },
+          {
+            'name'      : 'Material Start',
+            'url'       : 'https://github.com/angular/material-start',
+            'watchers'  : '81',
+            'forks'     : '303',
+          }
+          ];
+          return repos.map( function (repo) {
+            repo.value = repo.name.toLowerCase();
+            return repo;
+          });
+        }
+
+           //filter function for search query
+           function createFilterFor(query) {
+            var lowercaseQuery = angular.lowercase(query);
+            return function filterFn(state) {
+             return (state.value.indexOf(lowercaseQuery) === 0);
+           };
+         }
+       }  
+     </script>      
+   </head>
+   <body ng-app="firstApplication" ng-cloak>
+    <div ng-controller="autoCompleteController as ctrl" layout="column" ng-cloak>
+     <md-content class="md-padding">
+      <form ng-submit="$event.preventDefault()">
+       <p><code>md-autocomplete</code> can be used to provide search results from local or remote data sources.</p>
+       <md-autocomplete
+       ng-disabled="ctrl.isDisabled"
+       md-no-cache="ctrl.noCache"
+       md-selected-item="ctrl.selectedItem"
+       md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+       md-search-text="ctrl.searchText"
+       md-selected-item-change="ctrl.selectedItemChange(item)"
+       md-items="item in ctrl.querySearch(ctrl.searchText)"
+       md-item-text="item.name"
+       md-min-length="0"
+       placeholder="US State?">
+  <!--      <md-item-template>
+         <span md-highlight-text="ctrl.searchText" md-highlight-flags="^i">{{item.name}}</span>
+       </md-item-template> -->
+       <md-item-template>
+        <span class="item-title">
+          <md-icon md-svg-icon="img/icons/octicon-repo.svg"></md-icon>
+          <span> {{item.name}} </span>
+        </span>
+        <span class="item-metadata">
+          <span class="item-metastat">
+            <strong>{{item.watchers}}</strong> watchers
+          </span>
+          <span class="item-metastat">
+            <strong>{{item.forks}}</strong> forks
+          </span>
+        </span>
+      </md-item-template>
+
+
+      <md-not-found>
+       No states matching "{{ctrl.searchText}}" were found.
+       <a ng-click="ctrl.newState(ctrl.searchText)">Create a new one!</a>
+     </md-not-found>
+   </md-autocomplete>
+   <br/>
+   <md-checkbox ng-model="ctrl.simulateQuery">Show progress for results?</md-checkbox>
+   <md-checkbox ng-model="ctrl.noCache">Disable caching?</md-checkbox>
+   <md-checkbox ng-model="ctrl.isDisabled">Disable?</md-checkbox>
+   <p><code>md-autocomplete</code> caches results when performing a query.  After first call, it uses the cached results to eliminate unnecessary server requests or lookup logic and it can be disabled.</p>
+ </form>
+</md-content>
+</div>
+</body>
+</html>

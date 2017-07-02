@@ -1,7 +1,9 @@
 
 let bulkexportobj=require("./module/bulkexportfrom_jsonfile"),
 IMPORTANDEXPORTDATA=require("./module/importandexportdata"),
-APISEARCH=require("./apisearch");
+URL=require("url"),
+QUERYSTRING=require("querystring"),
+SEARCH=require("./module/search");
 http=require("http"),
 port=3000;
 
@@ -24,14 +26,26 @@ function requestHandler(req, res, next){
 		res.writeHead(200, {'Content-Type': 'image/x-icon'} );
 		res.end(/* icon content here */);
 	} else {
-		console.log("yes",req.url);
-		//res.end(JSON.stringify([1,2,3,4,5,6,7,8,9,10]));
-		APISEARCH.getdata("hello").then(result=>{
-			res.end(JSON.stringify(result));
-		},err=>{
-			res.end(JSON.stringify(err));
-		})
+		let queryData = URL.parse(req.url, true).query;
 		
+		let url=URL.parse(req.url, true);
+		//console.log("url",url.path);
+		console.log("queryData",queryData);
+		if(url.path.indexOf("autocomplete")>0){
+			SEARCH.autocomplete(queryData).then(result=>{
+				res.end(JSON.stringify(result));
+			},err=>{
+				res.end(JSON.stringify(err));
+			});
+		}
+		else
+		{
+			SEARCH.search(queryData).then(result=>{
+				res.end(JSON.stringify(result));
+			},err=>{
+				res.end(JSON.stringify(err));
+			})
+		}
 
 	}
 }
