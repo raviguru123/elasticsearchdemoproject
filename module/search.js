@@ -64,7 +64,8 @@ let autocomplete=function(data){
 				"title",
 				"name",
 				"about",
-				"profile_type"
+				"profile_type",
+				"_id"
 				],
 				"query": {
 					"bool": {
@@ -85,7 +86,7 @@ let autocomplete=function(data){
 						"filter": {
 							"range": {
 								"startdate": {
-									"gte": 1499085543000
+									"gte":"now"
 								}
 							}
 						}
@@ -100,6 +101,7 @@ let autocomplete=function(data){
 					}
 				}
 			}
+
 		}).then(function(data1){
 			return preparedata(data1.hits.hits);
 		}).then(function(data2){
