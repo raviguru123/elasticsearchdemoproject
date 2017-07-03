@@ -72,8 +72,9 @@ let autocomplete=function(data){
 						"must": [
 						{
 							"multi_match": {
-								"query": "friday",
-								"type": "best_fields",
+								"query":data.query,
+								"analyzer":"standard",
+								"type": "phrase_prefix",
 								"fields": [
 								"title^5",
 								"profile_type",
