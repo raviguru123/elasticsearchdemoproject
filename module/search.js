@@ -60,17 +60,35 @@ let autocomplete=function(data){
 	return new Promise(function(resolve,reject){
 		client.search({
 			body:{
-				"_source": ["title","name","about","profile_type"],
+				"_source": [
+				"title",
+				"name",
+				"about",
+				"profile_type"
+				],
 				"query": {
-					"multi_match": {
-						"query": data.query,
-						"type": "best_fields",
-						"fields": [
-						"title",
-						"profile_type",
-						"name",
-						"address"
-						]
+					"bool": {
+						"must": [
+						{
+							"multi_match": {
+								"query": "friday",
+								"type": "best_fields",
+								"fields": [
+								"title^5",
+								"profile_type",
+								"name^5",
+								"address"
+								]
+							}
+						}
+						],
+						"filter": {
+							"range": {
+								"startdate": {
+									"gte": 1499085543000
+								}
+							}
+						}
 					}
 				},
 				"highlight": {
