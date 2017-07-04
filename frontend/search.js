@@ -12,7 +12,7 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			obj.scrollId=_scroll_id;
 			console.log("obj",obj);
 			httpService.getdata(obj).then(function(results){
-				// console.log("result from search request",results);
+				console.log("result from search request",results);
 				_scroll_id=results._scroll_id;
 				results.hits=results.hits||{};
 				results.hits.hits=results.hits.hits||[];

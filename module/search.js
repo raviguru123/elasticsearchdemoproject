@@ -12,18 +12,25 @@ let search=function(data){
 
 let getdata=function(data){
 	if(data.scrollId==undefined){
-		console.log("search request hit");
+		
 		return new Promise(function(resolve,reject){
+			data.text=data.text||'party';
+			console.log("search request hit",data);
 			client.search({
 				index:"goparties",
 				scroll: '60s',
 				body:{
-					"query":{
-						"bool":{
-							"must":
-							[{
-								"match_all":{}
-							}]
+					"query": {
+						"bool": {
+							"must": [
+							{
+								"multi_match":
+								{
+									"query": data.text,
+									"fields": ["title","name","profile_type"]
+								}
+							}
+							]
 						}
 					}
 				}
@@ -77,8 +84,7 @@ let autocomplete=function(data){
 								"fields": [
 								"title^5",
 								"profile_type",
-								"name^5",
-								"address"
+								"name^5"
 								]
 							}
 						}
