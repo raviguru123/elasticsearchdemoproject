@@ -30,11 +30,16 @@ PUT /goparties/_mapping/profile
     "properties": {
       "name": {
         "type": "text",
-        "analyzer": "autocomplete"
+        "analyzer": "autocomplete",
+        "copy_to":"full_text"
       },
-      "address": {
+      "profile_type": {
         "type": "text",
-        "analyzer": "autocomplete"
+        "analyzer": "autocomplete",
+        "copy_to":"full_text"
+      },
+      "full_text":{
+        "type":"text"
       }
     }
   }

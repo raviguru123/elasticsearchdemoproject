@@ -10,7 +10,7 @@
 		.card{
 			width: 200px;
 			height: 200px;
-			background-color:green;
+			background-color:gray;
 			margin:2px;
 			float: left;
 		}
@@ -76,8 +76,10 @@
 
  <ul style="list-style: none">
  	<li class="card" ng-repeat="card in cards track by $index">
- 		<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}">
+ 		<b>{{$index}}{{card._source.profile_type}}</b>
+ 		<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}"/>
  		{{$index}}
+ 		
  	</li>
  </ul>
 

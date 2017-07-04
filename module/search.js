@@ -82,9 +82,8 @@ let autocomplete=function(data){
 								"query": data.query,
 								"analyzer": "standard",
 								"fields": [
-								"title^5",
-								"profile_type",
-								"name^5"
+								"title",
+								"name"
 								]
 							}
 						}
@@ -94,9 +93,7 @@ let autocomplete=function(data){
 				"highlight": {
 					"fields": {
 						"title": {},
-						"name": {},
-						"about": {},
-						"profile_type": {}
+						"name": {}
 					}
 				}
 			}
