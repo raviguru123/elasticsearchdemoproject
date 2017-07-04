@@ -56,7 +56,7 @@ let scroll=function(data){
 
 
 let autocomplete=function(data){
-	//console.log("data.query",data.query);
+	console.log("data.query",data.query);
 	return new Promise(function(resolve,reject){
 		client.search({
 			body:{
@@ -72,9 +72,8 @@ let autocomplete=function(data){
 						"must": [
 						{
 							"multi_match": {
-								"query":data.query,
-								"analyzer":"standard",
-								"type": "phrase_prefix",
+								"query": data.query,
+								"analyzer": "standard",
 								"fields": [
 								"title^5",
 								"profile_type",
@@ -83,14 +82,7 @@ let autocomplete=function(data){
 								]
 							}
 						}
-						],
-						"filter": {
-							"range": {
-								"startdate": {
-									"gte":"now"
-								}
-							}
-						}
+						]
 					}
 				},
 				"highlight": {
