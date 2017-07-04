@@ -32,7 +32,7 @@ PUT /goparties
         "autocomplete_filter": {
           "type": "edge_ngram",
           "min_gram": 1,
-          "max_gram": 10
+          "max_gram": 20
         },
         "whitespace_remove": {
           "type": "pattern_replace",

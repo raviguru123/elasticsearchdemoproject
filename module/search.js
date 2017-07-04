@@ -64,8 +64,10 @@ let scroll=function(data){
 
 let autocomplete=function(data){
 	console.log("data.query",data.query);
+	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
 		client.search({
+			index:"goparties2",
 			body:{
 				"_source": [
 				"title",
@@ -82,7 +84,7 @@ let autocomplete=function(data){
 								"query": data.query,
 								"analyzer": "standard",
 								"fields": [
-								"title",
+								"title^2",
 								"name"
 								]
 							}
