@@ -27,7 +27,7 @@ let getdata=function(data){
 								"multi_match":
 								{
 									"query": data.text,
-									"fields": ["title","name","profile_type"]
+									"fields": ["title","name"]
 								}
 							}
 							]
@@ -66,6 +66,7 @@ let autocomplete=function(data){
 	console.log("data.query",data.query);
 	return new Promise(function(resolve,reject){
 		client.search({
+			index:"goparties1",
 			body:{
 				"_source": [
 				"title",
@@ -79,20 +80,12 @@ let autocomplete=function(data){
 						"should": [
 						{
 							"match_phrase_prefix": {
-								"title":{
-									"query":data.query,
-									"slop":  10
-
-								} 
+								"title": data.query
 							}
 						},
 						{
 							"match_phrase_prefix": {
-								"name": {
-									"query":data.query,
-									"slop":  10
-
-								}
+								"name":data.query
 							}
 						}
 						]
@@ -120,20 +113,27 @@ function preparedata(data){
 	return new Promise(function(resolve,reject){
 		//console.log("prepare data function call");
 		var suggesations=[];
+		var duplicatecheck={};
 		data.forEach(function(item,index){
 
 			let highlight=item.highlight;
 			for (var key in highlight) {
 				if (highlight.hasOwnProperty(key)) {
 					var val = highlight[key];
-					suggesations.push({
-						display:item._source[key],
-						value:val[0],
-						watchers:val[0],
-						name:val[0],
-						forks:val[0],
-						url:val[0]
-					});
+					if(duplicatecheck[val]==undefined){
+						duplicatecheck[val]=val;
+						suggesations.push({
+							display:item._source[key],
+							value:val[0],
+							watchers:val[0],
+							name:val[0],
+							forks:val[0],
+							url:val[0]
+						});
+					}
+					else{
+
+					}
 
 				}
 			}
