@@ -87,6 +87,25 @@ let autocomplete=function(data){
 								]
 							}
 						}
+
+						],
+						"should": [
+						{
+							"match_phrase_prefix": {
+								"title": {
+									"query":data.query,
+									"max_expansions":50
+								}
+							}
+						},
+						{
+							"match_phrase_prefix":{
+								"name": {
+									"query":data.query,
+									"max_expansions":50
+								}
+							}
+						}
 						]
 					}
 				},
