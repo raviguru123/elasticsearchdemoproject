@@ -76,15 +76,23 @@ let autocomplete=function(data){
 				],
 				"query": {
 					"bool": {
-						"must": [
+						"should": [
 						{
-							"multi_match": {
-								"query": data.query,
-								"analyzer": "standard",
-								"fields": [
-								"title",
-								"name"
-								]
+							"match_phrase_prefix": {
+								"title":{
+									"query":data.query,
+									"slop":  10
+
+								} 
+							}
+						},
+						{
+							"match_phrase_prefix": {
+								"name": {
+									"query":data.query,
+									"slop":  10
+
+								}
 							}
 						}
 						]

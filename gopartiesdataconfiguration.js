@@ -24,6 +24,39 @@ PUT /goparties
 }
 
 
+PUT /goparties
+{
+  "settings": {
+    "analysis": {
+      "filter": {
+        "autocomplete_filter": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 10
+        },
+        "whitespace_remove": {
+          "type": "pattern_replace",
+          "pattern": " ",
+          "replacement": ""
+        }
+      },
+      "analyzer": {
+        "autocomplete": {
+          "type": "custom",
+          "tokenizer": "keyword",
+          "filter": [
+          "whitespace_remove",
+          "lowercase",
+          "autocomplete_filter"
+          ]
+        }
+      }
+    }
+  }
+}
+
+
+
 PUT /goparties/_mapping/profile
 {
   "profile": {
