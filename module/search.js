@@ -70,22 +70,25 @@ let autocomplete=function(data){
 			body:{
 				"_source": [
 				"title",
-				"name",
-				"about",
-				"profile_type",
-				"_id"
+				"name"
 				],
 				"query": {
 					"bool": {
 						"should": [
 						{
 							"match_phrase_prefix": {
-								"title": data.query
+								"title": {
+									"query":data.query,
+									"max_expansions":50
+								}
 							}
 						},
 						{
-							"match_phrase_prefix": {
-								"name":data.query
+							"match_phrase_prefix":{
+								"name": {
+									"query":data.query,
+									"max_expansions":50
+								}
 							}
 						}
 						]
