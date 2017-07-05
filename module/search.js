@@ -133,20 +133,27 @@ function preparedata(data){
 	return new Promise(function(resolve,reject){
 		//console.log("prepare data function call");
 		var suggesations=[];
+		var duplicatecheck={};
 		data.forEach(function(item,index){
 
 			let highlight=item.highlight;
 			for (var key in highlight) {
 				if (highlight.hasOwnProperty(key)) {
 					var val = highlight[key];
-					suggesations.push({
-						display:item._source[key],
-						value:val[0],
-						watchers:val[0],
-						name:val[0],
-						forks:val[0],
-						url:val[0]
-					});
+					if(duplicatecheck[val]==undefined){
+						duplicatecheck[val]=val;
+						suggesations.push({
+							display:item._source[key],
+							value:val[0],
+							watchers:val[0],
+							name:val[0],
+							forks:val[0],
+							url:val[0]
+						});
+					}
+					else{
+
+					}
 
 				}
 			}
