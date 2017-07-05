@@ -67,7 +67,7 @@ let autocomplete=function(data){
 	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
 		client.search({
-			index:"goparties2",
+			index:"goparties4",
 			body:{
 				"_source": [
 				"title",
@@ -82,10 +82,10 @@ let autocomplete=function(data){
 						{
 							"multi_match": {
 								"query": data.query,
-								"analyzer": "standard",
+								"analyzer": "french",
 								"fields": [
-								"title^2",
-								"name"
+								"name^2",
+								"title"
 								]
 							}
 						}
