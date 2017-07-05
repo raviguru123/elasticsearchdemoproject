@@ -42,8 +42,10 @@
 			<form ng-submit="$event.preventDefault()">
 				<p><code>md-autocomplete</code> can be used to provide search results from local or remote data sources.</p>
 				<md-autocomplete
+				id='Auto'
 				ng-disabled="isDisabled"
 				md-no-cache="noCache"
+				ng-enter="presEnter();"
 				md-selected-item="selectedItem"
 				md-search-text-change="searchTextChange(searchText)"
 				md-search-text="searchText"
