@@ -93,6 +93,14 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
  	$scope.search({"text":item.display});
  }
 
+ $scope.presEnter = function(e){
+ 	debugger;
+ 	var autoChild = document.getElementById('Auto').firstElementChild;
+ 	var el = angular.element(autoChild);
+ 	el.scope().$mdAutocompleteCtrl.hidden = true;
+ };
+
+
 
  function loadStates() {
  	var repos = [
@@ -235,3 +243,17 @@ app.directive("scrollDirective",function($rootScope,$window){
 		}
 	}
 })
+
+app.directive('ngEnter', function () {
+	return function (scope, element, attrs) {
+		element.bind("keydown keypress", function (event) {
+			if(event.which === 13) {
+				scope.$apply(function (){
+					scope.$eval(attrs.ngEnter);
+				});
+
+				event.preventDefault();
+			}
+		});
+	};
+});
