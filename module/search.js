@@ -67,57 +67,30 @@ let autocomplete=function(data){
 	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
 		client.search({
-			index:"goparties2",
+			index:"goparties3",
 			body:{
-				"_source": [
-				"title",
-				"name",
-				"about",
-				"profile_type",
-				"_id"
-				],
+				"_source":["title","name"],
 				"query": {
-					"bool": {
-						"must": [
-						{
-							"multi_match": {
-								"query": data.query,
-								"analyzer": "standard",
-								"fields": [
-								"title^2",
-								"name"
-								]
-							}
+					"match": {
+						"_all": {
+							"query":data.query,
+							"fuzziness": "AUTO",
+							"operator":  "and"
 						}
-
-						],
-						"should": [
-						{
-							"match_phrase_prefix": {
-								"title": {
-									"query":data.query,
-									"max_expansions":50
-								}
-							}
-						},
-						{
-							"match_phrase_prefix":{
-								"name": {
-									"query":data.query,
-									"max_expansions":50
-								}
-							}
-						}
-						]
 					}
 				},
 				"highlight": {
 					"fields": {
-						"title": {},
-						"name": {}
+						"name": { 
+							"require_field_match": false  
+						},
+						"title": { 
+							"require_field_match": false  
+						}
 					}
 				}
 			}
+
 
 		}).then(function(data1){
 			return preparedata(data1.hits.hits);
