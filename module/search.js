@@ -127,9 +127,9 @@ let autocomplete=function(data){
 						{
 							"multi_match": {
 								"query": data.query,
-								"analyzer": "french",
+								"analyzer": "autocomplete",
 								"fields": [
-								"name.autosuggesation^1.2",
+								"name.autosuggesation",
 								"title.autosuggesation"
 								]
 							}
@@ -140,7 +140,7 @@ let autocomplete=function(data){
 							"match_phrase_prefix": {
 								"title": {
 									"query":data.query,
-									"max_expansions":5
+									"max_expansions":50
 								}
 							}
 						},
@@ -148,7 +148,7 @@ let autocomplete=function(data){
 							"match_phrase_prefix":{
 								"name": {
 									"query":data.query,
-									"max_expansions":5
+									"max_expansions":50
 								}
 							}
 						},
@@ -156,6 +156,15 @@ let autocomplete=function(data){
 							"multi_match":{
 								"query": data.query,
 								"analyzer": "french",
+								"fields": [
+								"name.autosuggesation",
+								"title.autosuggesation"
+								]
+							}
+						},
+						{
+							"multi_match":{
+								"query": data.query,
 								"fields": [
 								"name",
 								"title"
