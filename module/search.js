@@ -38,6 +38,43 @@ let getdata=function(data){
 									"fields": ["name","profile_type","title"]
 								}
 							}
+							],
+							"filter": [
+							{
+								"bool": {
+									"should": [
+									{
+										"bool": {
+											"must": [
+											{
+												"exists": {
+													"field": "startdate"
+												}
+											}
+											],
+											"filter": {
+												"range": {
+													"startdate": {
+														"gte":new Date().getTime()
+													}
+												}
+											}
+										}
+									},
+									{
+										"bool": {
+											"must_not": [
+											{
+												"exists": {
+													"field": "startdate"
+												}
+											}
+											]
+										}
+									}
+									]
+								}
+							}
 							]
 						}
 					}
@@ -97,23 +134,69 @@ let autocomplete=function(data){
 								]
 							}
 						}
-
 						],
 						"should": [
 						{
 							"match_phrase_prefix": {
-								"title.autosuggesation": {
+								"title": {
 									"query":data.query,
-									"max_expansions":50
+									"max_expansions":5
 								}
 							}
 						},
 						{
 							"match_phrase_prefix":{
-								"name.autosuggesation": {
+								"name": {
 									"query":data.query,
-									"max_expansions":50
+									"max_expansions":5
 								}
+							}
+						},
+						{
+							"multi_match":{
+								"query": data.query,
+								"analyzer": "french",
+								"fields": [
+								"name",
+								"title"
+								]
+							}
+						}
+						],
+						"filter": [
+						{
+							"bool": {
+								"should": [
+								{
+									"bool": {
+										"must": [
+										{
+											"exists": {
+												"field": "startdate"
+											}
+										}
+										],
+										"filter": {
+											"range": {
+												"startdate": {
+													"gte":new Date().getTime()
+												}
+											}
+										}
+									}
+								},
+								{
+									"bool": {
+										"must_not": [
+										{
+											"exists": {
+												"field": "startdate"
+											}
+										}
+										]
+									}
+								}
+								]
 							}
 						}
 						]
