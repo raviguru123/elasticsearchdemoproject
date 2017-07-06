@@ -17,7 +17,7 @@ let getdata=function(data){
 			data.text=data.text||'party';
 			console.log("search request hit",data);
 			client.search({
-				index:"goparties",
+				index:"goparties5",
 				scroll: '60s',
 				body:{
 					"query": {
@@ -27,7 +27,15 @@ let getdata=function(data){
 								"multi_match":
 								{
 									"query": data.text,
-									"fields": ["title","name","profile_type"]
+									"fields": ["_all"]
+								}
+							}
+							],
+							"should":[
+							{
+								"multi_match":{
+									"query": data.text,
+									"fields": ["name","profile_type","title"]
 								}
 							}
 							]
@@ -67,7 +75,7 @@ let autocomplete=function(data){
 	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
 		client.search({
-			index:"goparties4",
+			index:"goparties5",
 			body:{
 				"_source": [
 				"title",
@@ -84,8 +92,8 @@ let autocomplete=function(data){
 								"query": data.query,
 								"analyzer": "french",
 								"fields": [
-								"name^2",
-								"title"
+								"name.autosuggesation^1.2",
+								"title.autosuggesation"
 								]
 							}
 						}
@@ -94,7 +102,7 @@ let autocomplete=function(data){
 						"should": [
 						{
 							"match_phrase_prefix": {
-								"title": {
+								"title.autosuggesation": {
 									"query":data.query,
 									"max_expansions":50
 								}
@@ -102,7 +110,7 @@ let autocomplete=function(data){
 						},
 						{
 							"match_phrase_prefix":{
-								"name": {
+								"name.autosuggesation": {
 									"query":data.query,
 									"max_expansions":50
 								}
@@ -113,8 +121,8 @@ let autocomplete=function(data){
 				},
 				"highlight": {
 					"fields": {
-						"title": {},
-						"name": {}
+						"title.autosuggesation": {},
+						"name.autosuggesation": {}
 					}
 				}
 			}
@@ -143,7 +151,7 @@ function preparedata(data){
 					if(duplicatecheck[val]==undefined){
 						duplicatecheck[val]=val;
 						suggesations.push({
-							display:item._source[key],
+							display:item._source[key.split(".")[0]],
 							value:val[0],
 							watchers:val[0],
 							name:val[0],

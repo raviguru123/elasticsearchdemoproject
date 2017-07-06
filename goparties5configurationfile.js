@@ -1,6 +1,4 @@
 
-
-
 PUT /goparties5
 {
   "settings": {
@@ -26,120 +24,60 @@ PUT /goparties5
           "type": "custom",
           "tokenizer": "keyword",
           "filter": [
-          "standard",
+          "standard", 
           "lowercase",
           "asciifolding",
           "french_stemmer",
           "autocomplete_filter",
           "whitespace_remove"
           ]
-        },
-        "fulltextsearch": {
-          "type": "custom",
-          "tokenizer": "standard",
-          "filter": [
-          "standard",
-          "lowercase"
-          ]
         }
       }
     }
   }
 }
 
+
+DELETE goparties5
 
 
 PUT /goparties5/_mapping/party
 {
   "party": {
-    "include_in_all": false,
-    "_all": {
-      "analyzer": "fulltextsearch",
-      "search_analyzer": "fulltextsearch"
-    },
     "properties": {
       "title": {
         "type": "text",
         "include_in_all": true,
         "fields": {
-          "autocomplete": {
+          "autosuggesation": {
             "type": "text",
-            "include_in_all": false,
+            "include_in_all": true,
             "analyzer": "autocomplete"
           }
         }
-      },
-      "genre": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "description": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "contactname": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "location": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "address": {
-        "type": "text",
-        "include_in_all": true
       }
     }
   }
 }
-
-
-
-
 
 
 
 PUT /goparties5/_mapping/profile
 {
   "profile": {
-    "include_in_all": false,
-    "_all": {
-      "analyzer": "fulltextsearch",
-      "search_analyzer": "fulltextsearch"
-    },
     "properties": {
       "name": {
         "type": "text",
-        "analyzer": "fulltextsearch",
         "include_in_all": true,
         "fields": {
-          "autocomplete": {
+          "autosuggesation": {
             "type": "text",
-            "include_in_all": false,
+            "include_in_all": true,
             "analyzer": "autocomplete"
           }
         }
-      },
-      "about": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "address": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "profile_type": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "description": {
-        "type": "text",
-        "include_in_all": true
-      },
-      "genre": {
-        "type": "text",
-        "include_in_all": true
       }
     }
   }
 }
+
