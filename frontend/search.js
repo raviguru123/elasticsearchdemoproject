@@ -80,7 +80,7 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
            	deferred = $q.defer();
            	httpService.autocomplete(query).then(function(response){
            		deferred.resolve(response);
-           		//console.log("response come from autocomplete",query,response);
+           		console.log("response come from autocomplete",query,response);
            	},function(resolve){
 
            	});
@@ -99,7 +99,7 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
  function searchTextChange(text) {
  	$scope.searchobj.text=text;
  	//$scope.search({"text":text});
- 	$log.info('Text changed to ' + text);
+ 	//$log.info('Text changed to ' + text);
  }
 
  function selectedItemChange(item) {
