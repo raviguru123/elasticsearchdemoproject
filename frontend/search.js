@@ -9,24 +9,39 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		$scope.getdataService=function(data){
 			var obj={};
 			obj=Object.assign({},data);
-			obj.scrollId=_scroll_id;
 			console.log("obj",obj);
 			httpService.getdata(obj).then(function(results){
 				console.log("result from search request",results);
-				_scroll_id=results._scroll_id;
-				results.hits=results.hits||{};
-				results.hits.hits=results.hits.hits||[];
-				results=results.hits.hits;
-				if (results.length !== 10) {
-					$scope.allResults = true;
-				}
-
-				var ii = 0;
-				for (; ii < results.length; ii++) {
-					$scope.cards.push(results[ii]);
-				}
+				$scope.parse(results);
 			});
 		}
+
+
+		$scope.scrollrequest=function(data){
+			var obj={};
+			obj=Object.assign({},data);
+			obj.scrollId=_scroll_id;
+			httpService.getdata(obj).then(function(results){
+				console.log("result from search request",results);
+				$scope.parse(results);
+			});
+		}
+
+		$scope.parse=function(results){
+			_scroll_id=results._scroll_id;
+			results.hits=results.hits||{};
+			results.hits.hits=results.hits.hits||[];
+			results=results.hits.hits;
+			if (results.length !== 10) {
+				$scope.allResults = true;
+			}
+
+			var ii = 0;
+			for (; ii < results.length; ii++) {
+				$scope.cards.push(results[ii]);
+			}
+		}
+
 
 
 		$scope.search = function(data){
@@ -42,7 +57,7 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
 
 		$scope.loadMore = function() {
-			$scope.getdataService($location.search());
+			$scope.scrollrequest($location.search());
 		};
 
 
@@ -82,9 +97,9 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
  }
 
  function searchTextChange(text) {
- 	//$scope.searchobj.text=text;
+ 	$scope.searchobj.text=text;
  	//$scope.search({"text":text});
- 	//$log.info('Text changed to ' + text);
+ 	$log.info('Text changed to ' + text);
  }
 
  function selectedItemChange(item) {
@@ -98,6 +113,7 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
  	var autoChild = document.getElementById('Auto').firstElementChild;
  	var el = angular.element(autoChild);
  	el.scope().$mdAutocompleteCtrl.hidden = true;
+ 	$scope.search($scope.searchobj);
  };
 
 
