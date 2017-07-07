@@ -21,7 +21,7 @@ let importdata=function(collectionName){
 		console.log("importdata",limitStart,limitEnd);
 		IMPORTDATA.getData(collectionName,limitStart,limitEnd)
 		.then(result1=>{
-			preparedata("goparties",collectionName||mappings[collectionName],result1)
+			preparedata("goparties6",collectionName||mappings[collectionName],result1)
 			.then(result2=>{
 				return exportdata(result2);
 			}).then(result3=>{
@@ -57,6 +57,12 @@ let preparedata=function(index,type,data){
 					"_type":type
 				}});
 				delete item._id;
+				if(item.geo!=undefined && item.geo.length==2){
+					let temp;
+					temp=item.geo[0];
+					item.geo[0]=item.geo[1];
+					item.geo[1]=temp;
+				}
 				bulkbody.push(item);
 			}
 			resolve(bulkbody);
