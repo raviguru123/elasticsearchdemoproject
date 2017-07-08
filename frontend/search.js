@@ -9,7 +9,6 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		$scope.getdataService=function(data){
 			var obj={};
 			obj=Object.assign({},data);
-			console.log("obj",obj);
 			httpService.getdata(obj).then(function(results){
 				console.log("result from search request",results);
 				$scope.parse(results);
@@ -17,12 +16,11 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		}
 
 
-		$scope.scrollrequest=function(data){
+		$scope.scrollrequest=function(scroll){
 			var obj={};
-			obj=Object.assign({},data);
-			obj.scrollId=_scroll_id;
+			//obj=Object.assign({},data);
+			obj.scrollId=scroll;
 			httpService.getdata(obj).then(function(results){
-				console.log("result from search request",results);
 				$scope.parse(results);
 			});
 		}
@@ -43,20 +41,45 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
 
 
-		$scope.search = function(data){
-			$scope.searchobj=data;
+		$scope.init=function(){
+			$scope.searchobj=$location.search();
 			$scope.page = 0;
 			$scope.cards = [];
 			$scope.allResults = false;
-			$location.search($httpParamSerializer(data));
 			$scope.getdataService(data);
 		};
 		
-		$scope.search($location.search());
 
+		function initsearch(){
+			$scope.searchobj=$location.search();
+			$scope.selectedItem=$scope.searchobj.text;
+			this.preparedata=function(){
+				return $scope.searchobj;
+			}
+
+			this.search=function(){
+				let data=this.preparedata();
+				$scope.page = 0;
+				$scope.cards = [];
+				$scope.allResults = false;
+				$scope.getdataService(data);
+			}
+		}
+
+		
+
+		let init=new initsearch();
+		$scope.init=function(){
+			init.search();	
+		}
+		$scope.init();
+		
+		$scope.$on("$locationChangeStart",function(){
+			init.search();
+		});	
 
 		$scope.loadMore = function() {
-			$scope.scrollrequest($location.search());
+			$scope.scrollrequest(_scroll_id);
 		};
 
 
@@ -76,7 +99,6 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			deferred = $q.defer();
 			httpService.autocomplete(query).then(function(response){
 				deferred.resolve(response);
-				console.log("response come from autocomplete",query,response);
 			},function(resolve){
 
 			});
@@ -84,38 +106,26 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		}
 
 
-
-		function createFilterFor(query) {
-			var lowercaseQuery = angular.lowercase(query);
-			return function filterFn(state) {
-				return (state.value.indexOf(lowercaseQuery) === 0);
-			};
-		}
-
 		function searchTextChange(text) {
 			$scope.searchobj.text=text;
 		}
 
 		function selectedItemChange(item) {
-			item=item||{};
-			$log.info('Item changed to ' + JSON.stringify(item));
-			$scope.search({"text":item.display});
+			if(item!=undefined){
+				item=item||{};
+				$scope.searchobj.text=item.display;
+				$location.search($httpParamSerializer($scope.searchobj));
+			}
 		}
 
 		$scope.presEnter = function(e){
 			var autoChild = document.getElementById('Auto').firstElementChild;
 			var el = angular.element(autoChild);
 			el.scope().$mdAutocompleteCtrl.hidden = true;
-			$scope.search($scope.searchobj);
+			$location.search($httpParamSerializer($scope.searchobj));
 		};
 
-
-
 		
-		$scope.check=function(){
-			console.log("location",$scope.searchobj);
-		}
-
 
 	}]);
 
@@ -197,42 +207,41 @@ app.factory('httpService', ['$http','$q','$httpParamSerializer',
 		obj.getdata=function(data){
 			var defer=$q.defer();
 			var url="http://localhost:3000/search?"+$httpParamSerializer(data);
-			//if(cache[url]==undefined){
+			$http.get(url).then(function(response){
+				cache[url]=response.data;
+				defer.resolve(response.data);
+			},function(reason){
+				defer.reject(reason);
+			});
+			return defer.promise;
+		}
+
+
+		obj.autocomplete=function(query){
+			let data={};
+			data.query=query;
+			var defer=$q.defer();
+			var url="http://localhost:3000/autocomplete?"+$httpParamSerializer(data);
+			if(cache[url]==undefined){
 				$http.get(url).then(function(response){
 					cache[url]=response.data;
 					defer.resolve(response.data);
 				},function(reason){
 					defer.reject(reason);
 				});
-				return defer.promise;
+
+			}
+			else
+			{
+				console.log("return from cache");
+				defer.resolve(cache[url]);
 			}
 
+			return defer.promise;
+		}
 
-			obj.autocomplete=function(query){
-				let data={};
-				data.query=query;
-				var defer=$q.defer();
-				var url="http://localhost:3000/autocomplete?"+$httpParamSerializer(data);
-				if(cache[url]==undefined){
-					$http.get(url).then(function(response){
-						cache[url]=response.data;
-						defer.resolve(response.data);
-					},function(reason){
-						defer.reject(reason);
-					});
-
-				}
-				else
-				{
-					console.log("return from cache");
-					defer.resolve(cache[url]);
-				}
-
-				return defer.promise;
-			}
-
-			return obj;
-		}]);
+		return obj;
+	}]);
 
 
 
@@ -284,11 +293,51 @@ app.directive('ngEnter', function () {
 				scope.$apply(function (){
 					scope.$eval(attrs.ngEnter);
 				});
-
 				event.preventDefault();
 			}
 		});
 	};
+});
+
+
+
+app.directive("datePicker",function(){
+	return {
+		restrict:'EA',
+		link:function($scope,element,$attr){
+			angular.getTestability(element).whenStable(function() {
+				$scope.$applyAsync(function(){
+					$('.datepicker').bootstrapMaterialDatePicker(
+						{ weekStart : 0,
+							time: false ,
+							format : 'DD/MM/YYYY',
+							minDate: new Date(),
+							clearButton:true }
+							);
+
+					$('.timepicker').bootstrapMaterialDatePicker
+					({
+						date: false,
+						shortTime: false,
+						format: 'HH:mm',
+						clearButton:true
+					});
+
+					$('.datetimepicker').bootstrapMaterialDatePicker
+					({
+						weekStart:0,
+						shortTime:false,
+						time:true,
+						minDate: new Date(),
+						date:true,
+						format: 'DD MMMM YYYY  HH:mm',
+						clearButton:true
+					});
+				});
+
+			});
+		}
+	}
 });
 
 
