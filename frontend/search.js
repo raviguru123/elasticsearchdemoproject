@@ -35,7 +35,6 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			if (results.length !== 10) {
 				$scope.allResults = true;
 			}
-
 			var ii = 0;
 			for (; ii < results.length; ii++) {
 				$scope.cards.push(results[ii]);
@@ -64,102 +63,128 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
 		$scope.simulateQuery = false;
 		$scope.isDisabled    = false;
-           // list of states to be displayed
-           $scope.states        = loadStates();
-           $scope.querySearch   = querySearch;
-           $scope.selectedItemChange = selectedItemChange;
-           $scope.searchTextChange   = searchTextChange;
-           $scope.newState = newState;
+		$scope.querySearch   = querySearch;
+		$scope.selectedItemChange = selectedItemChange;
+		$scope.searchTextChange   = searchTextChange;
+		$scope.newState = newState;
 
-           function newState(state) {
-           	alert("This functionality is yet to be implemented!");
-           } 
+		function newState(state) {
+			alert("This functionality is yet to be implemented!");
+		} 
 
-           function querySearch (query) {
-           	var results = query ? loadStates().filter(createFilterFor(query)) :loadStates();
-           	deferred = $q.defer();
-           	httpService.autocomplete(query).then(function(response){
-           		deferred.resolve(response);
-           		console.log("response come from autocomplete",query,response);
-           	},function(resolve){
+		function querySearch (query) {
+			deferred = $q.defer();
+			httpService.autocomplete(query).then(function(response){
+				deferred.resolve(response);
+				console.log("response come from autocomplete",query,response);
+			},function(resolve){
 
-           	});
-           	return deferred.promise;
-           }
-
- //filter function for search query
- 
- function createFilterFor(query) {
- 	var lowercaseQuery = angular.lowercase(query);
- 	return function filterFn(state) {
- 		return (state.value.indexOf(lowercaseQuery) === 0);
- 	};
- }
-
- function searchTextChange(text) {
- 	$scope.searchobj.text=text;
- 	//$scope.search({"text":text});
- 	//$log.info('Text changed to ' + text);
- }
-
- function selectedItemChange(item) {
- 	item=item||{};
- 	$log.info('Item changed to ' + JSON.stringify(item));
- 	$scope.search({"text":item.display});
- }
-
- $scope.presEnter = function(e){
- 	debugger;
- 	var autoChild = document.getElementById('Auto').firstElementChild;
- 	var el = angular.element(autoChild);
- 	el.scope().$mdAutocompleteCtrl.hidden = true;
- 	$scope.search($scope.searchobj);
- };
+			});
+			return deferred.promise;
+		}
 
 
 
- function loadStates() {
- 	var repos = [
- 	{
- 		'name'      : 'Angular 1',
- 		'url'       : 'https://github.com/angular/angular.js',
- 		'watchers'  : '3,623',
- 		'forks'     : '16,175',
- 	},
- 	{
- 		'name'      : 'Angular 2',
- 		'url'       : 'https://github.com/angular/angular',
- 		'watchers'  : '469',
- 		'forks'     : '760',
- 	},
- 	{
- 		'name'      : 'Angular Material',
- 		'url'       : 'https://github.com/angular/material',
- 		'watchers'  : '727',
- 		'forks'     : '1,241',
- 	},
- 	{
- 		'name'      : 'Bower Material',
- 		'url'       : 'https://github.com/angular/bower-material',
- 		'watchers'  : '42',
- 		'forks'     : '84',
- 	},
- 	{
- 		'name'      : 'Material Start',
- 		'url'       : 'https://github.com/angular/material-start',
- 		'watchers'  : '81',
- 		'forks'     : '303',
- 	}
- 	];
- 	return repos.map( function (repo) {
- 		repo.value = repo.name.toLowerCase();
- 		return repo;
- 	});
- }
+		function createFilterFor(query) {
+			var lowercaseQuery = angular.lowercase(query);
+			return function filterFn(state) {
+				return (state.value.indexOf(lowercaseQuery) === 0);
+			};
+		}
+
+		function searchTextChange(text) {
+			$scope.searchobj.text=text;
+		}
+
+		function selectedItemChange(item) {
+			item=item||{};
+			$log.info('Item changed to ' + JSON.stringify(item));
+			$scope.search({"text":item.display});
+		}
+
+		$scope.presEnter = function(e){
+			var autoChild = document.getElementById('Auto').firstElementChild;
+			var el = angular.element(autoChild);
+			el.scope().$mdAutocompleteCtrl.hidden = true;
+			$scope.search($scope.searchobj);
+		};
 
 
 
-}]);
+		
+		$scope.check=function(){
+			console.log("location",$scope.searchobj);
+		}
+
+
+	}]);
+
+
+app.directive("googleLocationAutocomplete",function($window){
+	return{
+		scope:{
+			ngModel:'=',
+			geoLon:'=',
+			geoLat:'=',
+		},
+		replace:true,
+		restrict:'EA',
+		link:function($scope,element,attr,controller,transclude){
+			var id=element[0].id;
+			$scope.initialize=function(id) {
+				var address=(document.getElementById(id));
+				var autocomplete = new google.maps.places.Autocomplete(address);
+				autocomplete.setTypes(['geocode']);
+				google.maps.event.addListener(autocomplete, 'place_changed', function() {
+					var place = autocomplete.getPlace();
+					if (!place.geometry) {
+						return;
+					}
+					var address = '';
+					if (place.address_components) {
+						address = [
+						(place.address_components[0] && place.address_components[0].short_name || ''),
+						(place.address_components[1] && place.address_components[1].short_name || ''),
+						(place.address_components[2] && place.address_components[2].short_name || '')
+						].join(' ');
+						$scope.codeAddress(id);
+						$scope.$emit(id,document.getElementById(id).value);
+					}
+				});
+			}
+			$scope.codeAddress=function(id) {
+				geocoder = new google.maps.Geocoder();
+				var address = document.getElementById(id).value;
+				geocoder.geocode( {'address': address}, function(results, status) {
+					if (status == google.maps.GeocoderStatus.OK) {
+						var latitude=results[0].geometry.location.lat();
+						var longitude=results[0].geometry.location.lng();
+						let obj={};
+						$window.sessionStorage.setItem(id+"latitude",latitude);
+						$window.sessionStorage.setItem(id+"longitude",longitude);
+						$scope.$apply(function (){
+							$scope.ngModel=address;
+							$scope.geoLat=latitude;
+							$scope.geoLon=longitude;
+						});
+
+					}else{
+						alert("Geocode was not successful for the following reason: " + status);
+					}
+				});
+			}
+
+			$scope.initialize(id);
+		}
+	}
+});
+
+
+
+
+
+
+
 
 
 
@@ -179,43 +204,35 @@ app.factory('httpService', ['$http','$q','$httpParamSerializer',
 				},function(reason){
 					defer.reject(reason);
 				});
-				
-			// }
-
-			// else
-			// {
-			// 	defer.resolve(cache[url]);
-			// }
-
-			return defer.promise;
-		}
-
-
-		obj.autocomplete=function(query){
-			let data={};
-			data.query=query;
-			var defer=$q.defer();
-			var url="http://localhost:3000/autocomplete?"+$httpParamSerializer(data);
-			if(cache[url]==undefined){
-				$http.get(url).then(function(response){
-					cache[url]=response.data;
-					defer.resolve(response.data);
-				},function(reason){
-					defer.reject(reason);
-				});
-				
-			}
-			else
-			{
-				console.log("return from cache");
-				defer.resolve(cache[url]);
+				return defer.promise;
 			}
 
-			return defer.promise;
-		}
 
-		return obj;
-	}]);
+			obj.autocomplete=function(query){
+				let data={};
+				data.query=query;
+				var defer=$q.defer();
+				var url="http://localhost:3000/autocomplete?"+$httpParamSerializer(data);
+				if(cache[url]==undefined){
+					$http.get(url).then(function(response){
+						cache[url]=response.data;
+						defer.resolve(response.data);
+					},function(reason){
+						defer.reject(reason);
+					});
+
+				}
+				else
+				{
+					console.log("return from cache");
+					defer.resolve(cache[url]);
+				}
+
+				return defer.promise;
+			}
+
+			return obj;
+		}]);
 
 
 
@@ -273,3 +290,5 @@ app.directive('ngEnter', function () {
 		});
 	};
 });
+
+

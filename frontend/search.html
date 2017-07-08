@@ -20,7 +20,10 @@
 	</style>
 
 	
-	
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDs4QGFiUhr_M9mhmA3PSR6c2T0N6HroZA"></script>
+	<script src="https://apis.google.com/js/platform.js" async defer></script>
+
 	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
 	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
 	
@@ -69,10 +72,14 @@
  <md-checkbox ng-model="noCache">Disable caching?</md-checkbox>
  <md-checkbox ng-model="isDisabled">Disable?</md-checkbox>
 
+ <div class="container">
+ 	<input ng-model="searchobj.location" geo-lat="searchobj.lat" geo-lon="searchobj.lon" type="text"   id="txtautocomplete"  placeholder="location autocomplete" google-location-autocomplete>
+ 	<input type="button"  ng-click="check()" name="" value="check model variable">
+ </div>
 
  <div class="container">
  	<h1>Hello this is not using </h1>
- 	<input ng-model="searchobj.text" style="width: 600px;height: 30px;"type="text" name="search" placeholder="Please Enter Text">
+ 	<input  ng-model="searchobj.text" style="width: 600px;height: 30px;"type="text" name="search" placeholder="Please Enter Text">
  	<input type="button" name="" ng-click="search(searchobj)" value="click me">
  </div>
 
@@ -88,5 +95,8 @@
  <div scroll-directive="loadMore(searchobj)" infinite-scroll-distance="1.2" style="height: 300px;width: 100%;background-color: green;    float: left;">
  	ABCD
  </div>
+
+ 
+
 </body>
 </html>
