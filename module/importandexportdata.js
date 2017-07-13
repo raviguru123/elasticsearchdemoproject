@@ -71,6 +71,7 @@ let preparedata=function(index,type,data){
 
 function exportdata(data){
 	return new Promise(function(resolve,reject){
+		//console.log("export data called");
 		EXPORTDATA.bulkexport(data)
 		.then(result=>{
 			console.log("final result");
