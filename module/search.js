@@ -12,12 +12,12 @@ let search=function(data){
 
 let getdata=function(data){
 	if(data.scrollId==undefined){
-		
 		return new Promise(function(resolve,reject){
 			data.text=data.text||'party';
 			console.log("search request hit",data);
 			client.search({
 				index:"goparties5",
+				type:"party",
 				scroll: '60s',
 				body:{
 					"query": {
@@ -79,11 +79,16 @@ let getdata=function(data){
 						}
 					}
 				}
-			}).then(function(body){
-				resolve(body);
-			},function(err){
-				reject(err);
-			});
+			},function(err,body){
+				if(err)
+				{
+					reject(err);
+				}
+				else{
+					resolve(body);
+				}
+
+			})
 		});
 	}
 	else{
@@ -113,6 +118,7 @@ let autocomplete=function(data){
 	return new Promise(function(resolve,reject){
 		client.search({
 			index:"goparties5",
+			type:"party,profile",
 			body:{
 				"_source": [
 				"title",
@@ -219,13 +225,14 @@ let autocomplete=function(data){
 				}
 			}
 
-		}).then(function(data1){
-			return preparedata(data1.hits.hits);
-		}).then(function(data2){
-			resolve(data2)
-		},function(err){
-			reject(err);
-		});;
+		},function(err,data1){
+			return preparedata(data1.hits.hits).then(function(data2){
+				resolve(data2)
+			},function(err){
+				reject(err);
+			});;
+		})
+
 	})
 }
 
