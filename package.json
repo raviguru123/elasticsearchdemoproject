@@ -19,7 +19,7 @@
   "dependencies": {
     "arangojs": "^5.6.1",
     "aws-es": "^1.5.3",
-    "aws-sdk": "^2.83.0",
+    "aws-sdk": "^2.84.0",
     "elasticsearch": "^13.2.0",
     "es": "^0.5.2",
     "fs": "0.0.1-security",

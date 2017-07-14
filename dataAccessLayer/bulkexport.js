@@ -1,22 +1,27 @@
-let esclientobj=require("../elasticsearchConnection");
+let esclient=require("../elasticsearchConnection");
 
-function bulkexport(data){
+function bulkexport(data,INDEX,TYPE){
 	return new Promise(function(resolve,reject){
-		console.log("data 0",data[0]);
-		console.log("data 0",data[1]);
-		var ops = [];
-		ops.push({ update: { _id : 'AVefK2vFmf0chKzzBkzy' }});
-		ops.push({ doc: { title: 'brand new title' }});
-		esclientobj.bulk({
-			index: 'gopratiestest',
-			type: 'party',
+		esclient.bulk({
+			index: INDEX,
+			type: TYPE,
 			body: data
 		}, function(err, data) {
+			console.log("index,type",INDEX,TYPE);
+			
 			if(err){
-				console.log("error occured",err);
+				reject(err);
 			}
-			console.log('json reply received',data);
+
+			else{
+				resolve(data);	
+			}
+			
+			
 		});
+
+
+
 	})
 }
 

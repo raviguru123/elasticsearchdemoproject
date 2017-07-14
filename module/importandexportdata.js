@@ -21,9 +21,9 @@ let importdata=function(collectionName){
 		console.log("importdata",limitStart,limitEnd);
 		IMPORTDATA.getData(collectionName,limitStart,limitEnd)
 		.then(result1=>{
-			preparedata("goparties",collectionName||mappings[collectionName],result1)
+			preparedata(result1)
 			.then(result2=>{
-				return exportdata(result2);
+				return exportdata(result2,"goparties",collectionName||mappings[collectionName]);
 			}).then(result3=>{
 				limitStart=limitStart+limitEnd;
 				if(result1.length==limitEnd){
@@ -44,17 +44,15 @@ let importdata=function(collectionName){
 
 }
 
-let preparedata=function(index,type,data){
+let preparedata=function(data){
 	var bulkbody=[];
-	console.log("preparedata called",index, type);
+	//console.log("preparedata called",index, type);
 	return new Promise(function(resolve,reject){
 		try{
 			for(var i=0;i<data.length;i++){
 				var item=data[i];
 				bulkbody.push({"index":{
-					"_id":item._key,
-					"_index":index,
-					"_type":type
+					"_id":item._key
 				}});
 				delete item._id;
 				bulkbody.push(item);
@@ -69,10 +67,10 @@ let preparedata=function(index,type,data){
 
 
 
-function exportdata(data){
+function exportdata(data,index,type){
 	return new Promise(function(resolve,reject){
 		//console.log("export data called");
-		EXPORTDATA.bulkexport(data)
+		EXPORTDATA.bulkexport(data,index,type)
 		.then(result=>{
 			console.log("final result");
 			resolve(result);
