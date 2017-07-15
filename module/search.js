@@ -102,12 +102,15 @@ let scroll=function(data){
 		console.log("scroll request hit");
 		client.scroll({
 			scrollId:data.scrollId,
-			scroll:"60s"
-		}).then(function(body){
-			resolve(body);
-		},function(err){
-			reject(err);
-		});
+			scroll:"1s"
+		},function(err,body){
+			if(err){
+				reject(err);
+			}
+			else{
+				resolve(body);
+			}
+		})
 	});
 }
 
