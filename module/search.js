@@ -16,8 +16,8 @@ let getdata=function(data){
 			data.text=data.text||'party';
 			console.log("search request hit",data);
 			client.search({
-				index:"goparties5",
-				type:"party",
+				index:"goparties_search",
+				type:"party,profile",
 				scroll: '60s',
 				body:{
 					"query": {
@@ -120,7 +120,7 @@ let autocomplete=function(data){
 	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
 		client.search({
-			index:"goparties5",
+			index:"goparties_search",
 			type:"party,profile",
 			body:{
 				"_source": [
