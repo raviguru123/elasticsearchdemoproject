@@ -1,9 +1,10 @@
-
 let bulkexportobj=require("./module/bulkexportfrom_jsonfile"),
 IMPORTANDEXPORTDATA=require("./module/importandexportdata"),
 URL=require("url"),
 QUERYSTRING=require("querystring"),
-SEARCH=require("./module/search");
+SEARCH=require("./module/search"),
+PATRY=require("./module/partyapi"),
+PROFILE=require("./module/profileapi");
 http=require("http"),
 port=3000;
 
@@ -33,6 +34,21 @@ function requestHandler(req, res, next){
 		//console.log("queryData",queryData);
 		if(url.path.indexOf("autocomplete")>0){
 			SEARCH.autocomplete(queryData).then(result=>{
+				res.end(JSON.stringify(result));
+			},err=>{
+				res.end(JSON.stringify(err));
+			});
+		}
+		else if(url.path.indexOf("party")>=0){
+			PATRY.getpartise(queryData).then(result=>{
+				res.end(JSON.stringify(result));
+			},err=>{
+				res.end(JSON.stringify(err));
+			});
+
+		}
+		else if(url.path.indexOf("profile")>=0){
+			PROFILE.getprofile(queryData).then(result=>{
 				res.end(JSON.stringify(result));
 			},err=>{
 				res.end(JSON.stringify(err));
