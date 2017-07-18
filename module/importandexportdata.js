@@ -23,7 +23,7 @@ let importdata=function(collectionName){
 		.then(result1=>{
 			preparedata(result1)
 			.then(result2=>{
-				return exportdata(result2,"goparties",collectionName||mappings[collectionName]);
+				return exportdata(result2,"goparties_index",collectionName||mappings[collectionName]);
 			}).then(result3=>{
 				limitStart=limitStart+limitEnd;
 				if(result1.length==limitEnd){
