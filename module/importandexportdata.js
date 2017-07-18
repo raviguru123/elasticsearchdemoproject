@@ -55,6 +55,12 @@ let preparedata=function(data){
 					"_id":item._key
 				}});
 				delete item._id;
+				if(item.geo!=undefined && item.geo.length==2){
+					let temp;
+					temp=item.geo[0];
+					item.geo[0]=item.geo[1];
+					item.geo[1]=temp;
+				}
 				bulkbody.push(item);
 			}
 			resolve(bulkbody);
