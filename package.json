@@ -19,6 +19,7 @@
   "dependencies": {
     "arangochair": "^4.0.2",
     "arangojs": "^5.6.1",
+    "aws-es": "^1.5.3",
     "body-parser": "^1.17.2",
     "elasticsearch": "^13.2.0",
     "es": "^0.5.2",

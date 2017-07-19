@@ -6,16 +6,34 @@
 		.container{
 			padding-left:200px
 		}
+		.cardList{
+		width: 100%;
+		padding: 25px;
+		list-style: none;
 
-		.card{
-			width: 200px;
-			height: 200px;
-			background-color:gray;
-			margin:2px;
-			float: left;
 		}
-		input.text{
-			
+		.card{
+		    width: 25%;
+		    height: 200px;
+		    background-color: #ececec;
+		    float: left;
+		    padding: 10px;
+		}
+		.card-href{
+			display: block;
+	    	width: 100%;
+	    	height: 100%;
+		}
+		.card-img{
+			width: 100%;
+			height: 100%;
+		}
+		.pertyIndex{
+	    background: black;
+	    color: white;
+	    position: absolute;
+	    padding: 5px;
+	    font-weight: bold;
 		}
 	</style>
 
@@ -89,13 +107,13 @@
  <hr/>
 
 
- <ul style="list-style: none">
+ <ul class="cardList">
  	<li class="card" ng-repeat="card in cards track by $index">
 
- 		<b>{{$index}}{{card._source.profile_type}}</b>
- 		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}">
- 			<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}"/>
- 			{{$index}}
+ 		<p class="pertyIndex">{{$index}} {{card._source.profile_type}}</p>
+ 		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}" class="card-href">
+ 			<img class="card-img" src="{{card._source.banner||card._source.cover}}"/>
+ 			
  		</a>
  	</li>
  </ul>

@@ -3,12 +3,12 @@
 <head>
 	<title></title>
 	<style type="text/css">
-		.container{
+				.container{
 			padding-left:200px
 		}
 
 		.card{
-			width: 200px;
+			width: 50%;
 			height: 200px;
 			background-color:green;
 			margin:2px;
@@ -23,6 +23,8 @@
 	<script src="bower_components/elasticsearch/elasticsearch.angular.min.js"></script>
 	<script type="text/javascript" src="search.js"></script>
 	<script type="text/javascript" src="bower_components/infinitescroll/ng-infinite-scroll.js"></script>
+	<!--  <link rel="stylesheet" type="text/css" href="css/index.css"> -->
+
 </head>
 <body ng-controller="searchController">
 	<div class="container">
@@ -30,7 +32,6 @@
 		<input ng-model="searchobj.text" style="width: 600px;height: 30px;"type="text" name="search" placeholder="Please Enter Text">
 		<input type="button" name="" ng-click="search(searchobj)" value="click me">
 	</div>
-
 	<ul style="list-style: none">
 		<li class="card" ng-repeat="card in cards track by $index">
 			<img style="width: 100%;height: 100%" src="{{card._source.banner||card._source.cover}}">
