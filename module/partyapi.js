@@ -68,9 +68,19 @@ let nearyou=function(data){
 		data.geo=data.geo||[];
 		let query,body={};
 		query={
-			"match_all": {}
-		};
-
+			"bool": {
+				"must": [
+				{"match_all": {}}
+				],
+				"filter": {
+					"range": {
+						"startdate": {
+							"gte": new Date().getTime()
+						}
+					}
+				}
+			}
+		}
 		body.query=query;
 		body.sort= [
 		{

@@ -35,7 +35,7 @@ let getdata=function(data){
 							{
 								"multi_match":{
 									"query": data.text,
-									"fields": ["name","profile_type","title"]
+									"fields": ["name","title^5"]
 								}
 							}
 							],

@@ -7,19 +7,42 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
 	<script type="text/javascript" src="../frontend/party.js"></script>
 	<style type="text/css">
-		
-
+		.cardList{
+			padding: 25px;
+			list-style: none;
+		}
 		.card{
-			width: 200px;
-			height: 200px;
-			background-color:gray;
-			margin:2px;
+			width: 23%;
+			height: 350px;
+			background-color: #ececec;
 			float: left;
+			padding: 12px;
+		}
+		.card-img{
+			width: 100%;
+			height: 150px;
+		}
+		.pertyIndex{
+			background: black;
+			color: white;
+			position: absolute;
+			padding: 5px;
+			font-weight: bold;
+		}
+		.card-detail{
+			display: block;
+			background-color: white;
+			color: black;
+			padding-bottom: 10px;
+		}
+		.card-detail p{
+			margin-left: 15px;
 
 		}
-		input.text{
-			
+		.devide{
+			clear: both;
 		}
+
 	</style>
 
 </head>
@@ -32,39 +55,42 @@
 	</div>
 
 	<h1>Recommended</h1>
-	<div>
-		<ul style="list-style: none">
+	<div class="container">
+		<ul class="cardList">
 			<li class="card" ng-repeat="card in recommended track by $index">
-				<p>{{card.title}}</p>
-				<p>{{card.location}}</p>
-				<p>{{card.genre}}</p>
-				<p>{{card.distance}}</p>
-				<a  target="_blank" href="./party.html?id='+{{card._id}}">
-					<img style="width: 100%;height: 100%" src="{{card.banner}}"/>
-					{{$index}}
-				</a>
-			</li>
-		</ul>
-	</div>
-	<br/>
-	<br/>
-	<br/>
-	
-	<div style="clear: left;">
-		<h1>Near You</h1>
-		<ul style="list-style: none">
-			<li class="card" ng-repeat="card in nearyou track by $index">
-				<p>{{card.title}}</p>
-				<p>{{card.location}}</p>
-				<p>{{card.genre}}</p>
-				<p>{{card.distance}}</p>
-				<a  target="_blank" href="./party.html?id='+{{card._id}}">
-					<img style="width: 100%;height: 100%" src="{{card.banner}}"/>
-					{{$index}}
-				</a>
-			</li>
-		</ul>
-	</div>
+				<div class="card-detail">
+					<p class="pertyIndex">{{card.startdate|date:'dd/MM/yyyy - h:mma'}}</p>
+					<a  target="_blank" href="./frontend/party.html?id={{card._id}}" class="card-href">
+						<img src="{{card.banner}}" class="card-img"/></a>
+						<p>{{card.title}}</p>
+						<p>{{card.location}}</p>
+						<p>{{card.genre}}</p>
+						<p>{{card.distance}}</p>
+					</div>
 
-</body>
-</html>
+				</li>
+			</ul>
+		</div>
+
+		<div class="devide"></div>
+
+		<div class="container">
+			<h1>Near You</h1>
+			<ul class="cardList">
+				<li class="card" ng-repeat="card in nearyou track by $index">
+					
+					<div class="card-detail">
+						<p class="pertyIndex">{{card.startdate|date:'dd/MM/yyyy - h:mma'}}</p>
+						<a  target="_blank" href="./frontend/party.html?id={{card._id}}" class="card-href">
+							<img src="{{card.banner}}" class="card-img"/></a>
+							<p>{{card.title}}</p>
+							<p>{{card.location}}</p>
+							<p>{{card.genre}}</p>
+							<p>{{card.distance}}</p>
+						</div>
+					</li>
+				</ul>
+			</div>
+
+		</body>
+		</html>

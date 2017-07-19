@@ -7,33 +7,33 @@
 			padding-left:200px
 		}
 		.cardList{
-		width: 100%;
-		padding: 25px;
-		list-style: none;
+			width: 100%;
+			padding: 25px;
+			list-style: none;
 
 		}
 		.card{
-		    width: 25%;
-		    height: 200px;
-		    background-color: #ececec;
-		    float: left;
-		    padding: 10px;
+			width: 25%;
+			height: 200px;
+			background-color: #ececec;
+			float: left;
+			padding: 10px;
 		}
 		.card-href{
 			display: block;
-	    	width: 100%;
-	    	height: 100%;
+			width: 100%;
+			height: 100%;
 		}
 		.card-img{
 			width: 100%;
 			height: 100%;
 		}
 		.pertyIndex{
-	    background: black;
-	    color: white;
-	    position: absolute;
-	    padding: 5px;
-	    font-weight: bold;
+			background: black;
+			color: white;
+			position: absolute;
+			padding: 5px;
+			font-weight: bold;
 		}
 	</style>
 
@@ -110,7 +110,7 @@
  <ul class="cardList">
  	<li class="card" ng-repeat="card in cards track by $index">
 
- 		<p class="pertyIndex">{{$index}} {{card._source.profile_type}}</p>
+ 		<p class="pertyIndex">{{card._source.profile_type==undefined?(card._source.startdate|date:'dd/MM/yyyy - h:mma'):card._source.profile_type}}</p>
  		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}" class="card-href">
  			<img class="card-img" src="{{card._source.banner||card._source.cover}}"/>
  			
