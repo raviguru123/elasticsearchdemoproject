@@ -25,6 +25,7 @@ let importdata=function(collectionName){
 			.then(result2=>{
 				return exportdata(result2,"goparties_index",collectionName||mappings[collectionName]);
 			}).then(result3=>{
+				console.log("exportdata");
 				limitStart=limitStart+limitEnd;
 				if(result1.length==limitEnd){
 					recursive();
