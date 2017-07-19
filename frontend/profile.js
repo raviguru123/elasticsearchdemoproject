@@ -9,7 +9,12 @@ app.controller('profilecontroller', ['$scope', '$location','$window','httpServic
 		function getdata(){
 			var url="http://localhost:3000/profile?id="+$location.search().id;
 			httpService.get(url).then(function(response){
+				response=response.data;
 				console.log("data come from party page response",response);
+				debugger;
+				$scope.nearyou=response.nearyou;
+				$scope.recommended=response.recommended;
+				$scope.profile=response.profile;
 			},function(reason){
 
 			});
