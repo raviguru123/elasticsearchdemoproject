@@ -68,7 +68,6 @@
 	<div ng-controller="searchController" layout="column" ng-cloak>
 		<md-content class="md-padding">
 			<form ng-submit="$event.preventDefault()">
-				<p><code>md-autocomplete</code> can be used to provide search results from local or remote data sources.</p>
 				<md-autocomplete
 				id='Auto'
 				ng-disabled="isDisabled"
@@ -100,29 +99,40 @@
  	<input   name="date" type="text" class="datepicker" ng-model='filterobj.date'  placeholder="OR SELECT DATE"/>	
  </div>
  <hr/>
- <md-checkbox ng-model="simulateQuery">Show progress for results?</md-checkbox>
+<!--  <md-checkbox ng-model="simulateQuery">Show progress for results?</md-checkbox>
  <md-checkbox ng-model="noCache">Disable caching?</md-checkbox>
  <md-checkbox ng-model="isDisabled">Disable?</md-checkbox>
- <hr/>
- <hr/>
+--> 
+<md-radio-group layout="row" ng-model="searchobj.type">
+	<md-radio-button value="party" class="md-primary">Party</md-radio-button>
+	<md-radio-button value="profile" class="md-primary">Profile</md-radio-button>
+</md-radio-group>
+
+<md-radio-group layout="row" ng-model="searchobj.sort">
+	<md-radio-button value="r" >Recomended</md-radio-button>
+	<md-radio-button value="t"> Trending </md-radio-button>
+	<md-radio-button value="n">Near you</md-radio-button>
+</md-radio-group>
+<hr/>
+<hr/>
 
 
- <ul class="cardList">
- 	<li class="card" ng-repeat="card in cards track by $index">
+<ul class="cardList">
+	<li class="card" ng-repeat="card in cards track by $index">
 
- 		<p class="pertyIndex">{{card._source.profile_type==undefined?(card._source.startdate|date:'dd/MM/yyyy - h:mma'):card._source.profile_type}}</p>
- 		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}" class="card-href">
- 			<img class="card-img" src="{{card._source.banner||card._source.cover}}"/>
- 			
- 		</a>
- 	</li>
- </ul>
+		<p class="pertyIndex">{{card._source.profile_type==undefined?(card._source.startdate|date:'dd/MM/yyyy - h:mma'):card._source.profile_type}}</p>
+		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}" class="card-href">
+			<img class="card-img" src="{{card._source.banner||card._source.cover}}"/>
 
- <div scroll-directive="loadMore(searchobj)" infinite-scroll-distance="1.2" style="height: 300px;width: 100%;background-color: green;    float: left;">
- 	ABCD
- </div>
+		</a>
+	</li>
+</ul>
 
- 
+<div scroll-directive="loadMore(searchobj)" infinite-scroll-distance="1.2" style="height: 300px;width: 100%;background-color: green;    float: left;">
+	ABCD
+</div>
+
+
 
 </body>
 </html>

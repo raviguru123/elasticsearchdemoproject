@@ -16,6 +16,26 @@ let searchexecute=function(body,index,types){
 	})
 }
 
+let scroll=function(data){
+	return new Promise(function(resolve,reject){
+		console.log("scroll request hit");
+		client.scroll({
+			scrollId:data.scrollId,
+			scroll:data.time
+		},function(err,body){
+			if(err){
+				reject(err);
+			}
+			else{
+				resolve(body);
+			}
+		})
+	});
+}
+
+
+
 module.exports={
-	searchexecute
+	searchexecute,
+	scroll
 }

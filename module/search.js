@@ -1,5 +1,5 @@
 let client=require("../elasticsearchConnection");
-
+let EXECUTEQUERY=require("../dataAccessLayer/executequery");
 let search=function(data){
 	return new Promise(function(resolve,reject){
 		getdata(data).then(result=>{
@@ -13,63 +13,60 @@ let search=function(data){
 let getdata=function(data){
 	if(data.scrollId==undefined){
 		return new Promise(function(resolve,reject){
-			data.text=data.text||'party';
 			console.log("search request hit",data);
-			client.search({
-				index:"goparties_search",
-				type:"party,profile",
-				scroll: '60s',
-				body:{
-					"query": {
+			
+			data.text=data.text||'party';
+			data.type=data.type||'party,profile';
+			let body={},query;
+			//body.scroll="1s";
+			
+			query={
+				"bool": {
+					"must": [
+					{
+						"multi_match":
+						{
+							"query": data.text,
+							"fields": ["_all"]
+						}
+					}
+					],
+					"should":[
+					{
+						"multi_match":{
+							"query": data.text,
+							"fields": ["name","title^5"]
+						}
+					}
+					],
+					"filter": [
+					{
 						"bool": {
-							"must": [
-							{
-								"multi_match":
-								{
-									"query": data.text,
-									"fields": ["_all"]
-								}
-							}
-							],
-							"should":[
-							{
-								"multi_match":{
-									"query": data.text,
-									"fields": ["name","title^5"]
-								}
-							}
-							],
-							"filter": [
+							"should": [
 							{
 								"bool": {
-									"should": [
+									"must": [
 									{
-										"bool": {
-											"must": [
-											{
-												"exists": {
-													"field": "startdate"
-												}
-											}
-											],
-											"filter": {
-												"range": {
-													"startdate": {
-														"gte":new Date().getTime()
-													}
-												}
+										"exists": {
+											"field": "startdate"
+										}
+									}
+									],
+									"filter": {
+										"range": {
+											"startdate": {
+												"gte":new Date().getTime()
 											}
 										}
-									},
+									}
+								}
+							},
+							{
+								"bool": {
+									"must_not": [
 									{
-										"bool": {
-											"must_not": [
-											{
-												"exists": {
-													"field": "startdate"
-												}
-											}
-											]
+										"exists": {
+											"field": "startdate"
 										}
 									}
 									]
@@ -78,18 +75,20 @@ let getdata=function(data){
 							]
 						}
 					}
+					]
 				}
-			},function(err,body){
-				if(err)
-				{
-					reject(err);
-				}
-				else{
-					resolve(body);
-				}
+			}
 
+			body.query=query;
+			executepartysearch(body,"goparties_search",data.type)
+			.then(result=>{
+				resolve(result);
+			}).catch(err=>{
+				reject(err);
 			})
+
 		});
+
 	}
 	else{
 		return scroll(data);
@@ -100,17 +99,13 @@ let getdata=function(data){
 let scroll=function(data){
 	return new Promise(function(resolve,reject){
 		console.log("scroll request hit");
-		client.scroll({
-			scrollId:data.scrollId,
-			scroll:"1s"
-		},function(err,body){
-			if(err){
-				reject(err);
-			}
-			else{
-				resolve(body);
-			}
-		})
+		data.time="1s";
+		EXECUTEQUERY.scroll(data)
+		.then(result=>{
+			resolve(result);
+		}).catch(err=>{
+			reject(err);
+		});
 	});
 }
 
@@ -119,99 +114,86 @@ let autocomplete=function(data){
 	console.log("data.query",data.query);
 	data.query=data.query||"party";
 	return new Promise(function(resolve,reject){
-		client.search({
-			index:"goparties_search",
-			type:"party,profile",
-			body:{
-				"_source": [
-				"title",
-				"name",
-				"about",
-				"profile_type",
-				"_id"
+		let body={},query;
+		query={
+			"bool": {
+				"must": [
+				{
+					"multi_match": {
+						"query": data.query,
+						"analyzer": "autocomplete",
+						"fields": [
+						"name.autosuggesation",
+						"title.autosuggesation"
+						]
+					}
+				}
 				],
-				"query": {
-					"bool": {
-						"must": [
-						{
-							"multi_match": {
-								"query": data.query,
-								"analyzer": "autocomplete",
-								"fields": [
-								"name.autosuggesation",
-								"title.autosuggesation"
-								]
-							}
+				"should": [
+				{
+					"match_phrase_prefix": {
+						"title": {
+							"query":data.query,
+							"max_expansions":50
 						}
-						],
+					}
+				},
+				{
+					"match_phrase_prefix":{
+						"name": {
+							"query":data.query,
+							"max_expansions":50
+						}
+					}
+				},
+				{
+					"multi_match":{
+						"query": data.query,
+						"analyzer": "french",
+						"fields": [
+						"name.autosuggesation",
+						"title.autosuggesation"
+						]
+					}
+				},
+				{
+					"multi_match":{
+						"query": data.query,
+						"fields": [
+						"name",
+						"title"
+						]
+					}
+				}
+				],
+				"filter": [
+				{
+					"bool": {
 						"should": [
 						{
-							"match_phrase_prefix": {
-								"title": {
-									"query":data.query,
-									"max_expansions":50
-								}
-							}
-						},
-						{
-							"match_phrase_prefix":{
-								"name": {
-									"query":data.query,
-									"max_expansions":50
-								}
-							}
-						},
-						{
-							"multi_match":{
-								"query": data.query,
-								"analyzer": "french",
-								"fields": [
-								"name.autosuggesation",
-								"title.autosuggesation"
-								]
-							}
-						},
-						{
-							"multi_match":{
-								"query": data.query,
-								"fields": [
-								"name",
-								"title"
-								]
-							}
-						}
-						],
-						"filter": [
-						{
 							"bool": {
-								"should": [
+								"must": [
 								{
-									"bool": {
-										"must": [
-										{
-											"exists": {
-												"field": "startdate"
-											}
-										}
-										],
-										"filter": {
-											"range": {
-												"startdate": {
-													"gte":new Date().getTime()
-												}
-											}
+									"exists": {
+										"field": "startdate"
+									}
+								}
+								],
+								"filter": {
+									"range": {
+										"startdate": {
+											"gte":new Date().getTime()
 										}
 									}
-								},
+								}
+							}
+						},
+						{
+							"bool": {
+								"must_not": [
 								{
-									"bool": {
-										"must_not": [
-										{
-											"exists": {
-												"field": "startdate"
-											}
-										}
-										]
+									"exists": {
+										"field": "startdate"
 									}
 								}
 								]
@@ -219,23 +201,40 @@ let autocomplete=function(data){
 						}
 						]
 					}
-				},
-				"highlight": {
-					"fields": {
-						"title.autosuggesation": {},
-						"name.autosuggesation": {}
-					}
 				}
+				]
 			}
+		}
 
-		},function(err,data1){
-			return preparedata(data1.hits.hits).then(function(data2){
-				resolve(data2)
-			},function(err){
-				reject(err);
-			});;
+
+		body._source=[
+		"title",
+		"name",
+		"about",
+		"profile_type",
+		"_id"
+		];
+
+		
+		body.highlight=	 {
+			"fields": {
+				"title.autosuggesation": {},
+				"name.autosuggesation": {}
+			}
+		}
+
+
+
+		body.query=query;
+
+		executepartysearch(body,"goparties_search","party,profile")
+		.then(result1=>{
+			return preparedata(result1.hits.hits)
+		}).then(result2=>{
+			resolve(result2);
+		}).catch(err=>{
+			reject(err);
 		})
-
 	})
 }
 
@@ -272,6 +271,19 @@ function preparedata(data){
 		resolve(suggesations);
 	});
 }
+
+
+let executepartysearch=function(body,index,type){
+	return new Promise(function(resolve,reject){
+		EXECUTEQUERY.searchexecute(body,index,type)
+		.then(result=>{
+			resolve(result);
+		}).catch(err=>{
+			reject(err);
+		})
+	});
+}
+
 
 
 

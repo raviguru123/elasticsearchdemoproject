@@ -28,10 +28,9 @@ function requestHandler(req, res, next){
 		res.end(/* icon content here */);
 	} else {
 		let queryData = URL.parse(req.url, true).query;
-		
+		//console.log("queryData",queryData);
 		let url=URL.parse(req.url, true);
 		//console.log("url",url.path);
-		//console.log("queryData",queryData);
 		if(url.path.indexOf("autocomplete")>0){
 			SEARCH.autocomplete(queryData).then(result=>{
 				res.end(JSON.stringify(result));
@@ -39,7 +38,7 @@ function requestHandler(req, res, next){
 				res.end(JSON.stringify(err));
 			});
 		}
-		else if(url.path.indexOf("party")>=0){
+		else if(url.path.indexOf("party?id")>=0){
 			PATRY.getpartise(queryData).then(result=>{
 				res.end(JSON.stringify(result));
 			},err=>{
@@ -47,7 +46,7 @@ function requestHandler(req, res, next){
 			});
 
 		}
-		else if(url.path.indexOf("profile")>=0){
+		else if(url.path.indexOf("profile?id")>=0){
 			PROFILE.getprofile(queryData).then(result=>{
 				res.end(JSON.stringify(result));
 			},err=>{
@@ -56,6 +55,7 @@ function requestHandler(req, res, next){
 		}
 		else
 		{
+			
 			SEARCH.search(queryData).then(result=>{
 				res.end(JSON.stringify(result));
 			},err=>{

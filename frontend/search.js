@@ -1,16 +1,12 @@
 var app=angular.module("search.module",["ngMaterial"]);
 app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpService','$location','$httpParamSerializer',
 	function($timeout, $q, $log,$scope,httpService,$location,$httpParamSerializer){
-		$scope.cards = []; 
-		$scope.page = 0; 
-		$scope.allResults = false;
 		let _scroll_id;
 		
 		$scope.getdataService=function(data){
 			var obj={};
 			obj=Object.assign({},data);
 			httpService.getdata(obj).then(function(results){
-				console.log("result from search request",results);
 				$scope.parse(results);
 			});
 		}
@@ -18,11 +14,17 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
 		$scope.scrollrequest=function(scroll){
 			var obj={};
-			//obj=Object.assign({},data);
 			obj.scrollId=scroll;
-			httpService.getdata(obj).then(function(results){
-				$scope.parse(results);
-			});
+
+			if(scroll!=undefined){
+				_scroll_id=undefined;
+				httpService.getdata(obj).then(function(results){
+					$scope.parse(results);
+				});
+			}
+			else{
+				return;
+			}
 		}
 
 		$scope.parse=function(results){
@@ -40,19 +42,16 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		}
 
 
-
-		$scope.init=function(){
-			$scope.searchobj=$location.search();
-			$scope.page = 0;
-			$scope.cards = [];
-			$scope.allResults = false;
-			$scope.getdataService(data);
-		};
-		
-
 		function initsearch(){
+			$scope.cards = []; 
+			$scope.page = 0; 
+			$scope.allResults = false;
 			$scope.searchobj=$location.search();
 			$scope.selectedItem=$scope.searchobj.text;
+
+
+
+
 			this.preparedata=function(){
 				return $scope.searchobj;
 			}
@@ -68,15 +67,22 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 
 		
 
-		let init=new initsearch();
-		$scope.init=function(){
-			init.search();	
-		}
-		$scope.init();
+		$scope.$watch("searchobj",function(newvalue,oldvalue,scope){
+			if(newvalue!=oldvalue){
+				scope.searchobj=newvalue;
+				console.log("value change");
+				$location.search($httpParamSerializer($scope.searchobj));
+			}
+		},true)
+
+
 		
+		let init=new initsearch();
+
 		$scope.$on("$locationChangeStart",function(){
 			init.search();
 		});	
+
 
 		$scope.loadMore = function() {
 			$scope.scrollrequest(_scroll_id);
@@ -105,16 +111,16 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			return deferred.promise;
 		}
 
-
+		var searchtext;
 		function searchTextChange(text) {
-			$scope.searchobj.text=text;
+			searchtext=text;
 		}
 
+		
 		function selectedItemChange(item) {
 			if(item!=undefined){
 				item=item||{};
 				$scope.searchobj.text=item.display;
-				$location.search($httpParamSerializer($scope.searchobj));
 			}
 		}
 
@@ -122,10 +128,12 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			var autoChild = document.getElementById('Auto').firstElementChild;
 			var el = angular.element(autoChild);
 			el.scope().$mdAutocompleteCtrl.hidden = true;
-			$location.search($httpParamSerializer($scope.searchobj));
+			$scope.searchobj.text=searchtext;
 		};
 
 		
+
+
 
 	}]);
 
