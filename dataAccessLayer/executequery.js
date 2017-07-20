@@ -1,4 +1,6 @@
 let client=require("../elasticsearchConnection");
+
+
 let searchexecute=function(body,index,types){
 	return new Promise(function(resolve,reject){
 		client.search({
@@ -15,6 +17,27 @@ let searchexecute=function(body,index,types){
 		})
 	})
 }
+
+
+let searchscroll=function(body,index,types){
+	return new Promise(function(resolve,reject){
+		client.search({
+			"index":index,
+			"type":types,
+			"scroll":"1m",
+			"body":body
+		},function(err,data){
+			if(err){
+				reject(err);
+			}
+			else{
+				resolve(data);
+			}
+		})
+	})
+}
+
+
 
 let scroll=function(data){
 	return new Promise(function(resolve,reject){
@@ -37,5 +60,6 @@ let scroll=function(data){
 
 module.exports={
 	searchexecute,
+	searchscroll,
 	scroll
 }

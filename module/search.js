@@ -1,4 +1,3 @@
-let client=require("../elasticsearchConnection");
 let EXECUTEQUERY=require("../dataAccessLayer/executequery");
 let search=function(data){
 	return new Promise(function(resolve,reject){
@@ -80,7 +79,7 @@ let getdata=function(data){
 			}
 
 			body.query=query;
-			executepartysearch(body,"goparties_search",data.type)
+			executepartysearchscroll(body,"goparties_search",data.type)
 			.then(result=>{
 				resolve(result);
 			}).catch(err=>{
@@ -273,9 +272,23 @@ function preparedata(data){
 }
 
 
+
+
 let executepartysearch=function(body,index,type){
 	return new Promise(function(resolve,reject){
 		EXECUTEQUERY.searchexecute(body,index,type)
+		.then(result=>{
+			resolve(result);
+		}).catch(err=>{
+			reject(err);
+		})
+	});
+}
+
+
+let executepartysearchscroll=function(body,index,type){
+	return new Promise(function(resolve,reject){
+		EXECUTEQUERY.searchscroll(body,index,type)
 		.then(result=>{
 			resolve(result);
 		}).catch(err=>{
