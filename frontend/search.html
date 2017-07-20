@@ -96,7 +96,7 @@
  <hr/>
  <div class="container">
  	<input ng-model="searchobj.location" geo-lat="searchobj.lat" geo-lon="searchobj.lon" type="text"   id="txtautocomplete"  placeholder="location autocomplete" google-location-autocomplete>
- 	<input   name="date" type="text" class="datepicker" ng-model='filterobj.date'  placeholder="OR SELECT DATE"/>	
+ 	<input  ng-model="searchobj.startdate" name="date" type="text" class="datepicker" ng-model='filterobj.date'  placeholder="OR SELECT DATE"/>	
  </div>
  <hr/>
 <!--  <md-checkbox ng-model="simulateQuery">Show progress for results?</md-checkbox>

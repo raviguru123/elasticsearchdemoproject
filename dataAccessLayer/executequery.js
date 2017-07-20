@@ -24,7 +24,7 @@ let searchscroll=function(body,index,types){
 		client.search({
 			"index":index,
 			"type":types,
-			"scroll":"1m",
+			"scroll":"20m",
 			"body":body
 		},function(err,data){
 			if(err){

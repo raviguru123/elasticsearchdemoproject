@@ -12,13 +12,15 @@ let search=function(data){
 let getdata=function(data){
 	if(data.scrollId==undefined){
 		return new Promise(function(resolve,reject){
-			console.log("search request hit",data);
 			
+			console.log("before search request hit",data);
 			data.text=data.text||'party';
 			data.type=data.type||'party,profile';
+			data.startdate=data.startdate||new Date().getTime();
+			data.startdate=parseInt(data.startdate, 10);
+			data.enddate=data.startdate+24*60*60*1000;
+			console.log("search request hit",data);
 			let body={},query;
-			//body.scroll="1s";
-			
 			query={
 				"bool": {
 					"must": [
@@ -54,7 +56,8 @@ let getdata=function(data){
 									"filter": {
 										"range": {
 											"startdate": {
-												"gte":new Date().getTime()
+												"gte":data.startdate,
+												"lte":data.enddate
 											}
 										}
 									}
@@ -98,7 +101,7 @@ let getdata=function(data){
 let scroll=function(data){
 	return new Promise(function(resolve,reject){
 		console.log("scroll request hit");
-		data.time="1s";
+		data.time="10m";
 		EXECUTEQUERY.scroll(data)
 		.then(result=>{
 			resolve(result);

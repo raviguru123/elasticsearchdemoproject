@@ -49,11 +49,12 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			$scope.searchobj=$location.search();
 			$scope.selectedItem=$scope.searchobj.text;
 
-
-
-
 			this.preparedata=function(){
-				return $scope.searchobj;
+				var date=Object.assign({},$scope.searchobj);
+				console.log("date.startdate",date.startdate);
+				let datearr=date.startdate.split("/");
+				date.startdate=new Date(datearr[1]+"/"+datearr[0]+"/"+datearr[2]).getTime();
+				return date;
 			}
 
 			this.search=function(){
