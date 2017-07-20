@@ -48,6 +48,7 @@
 </head>
 <body ng-controller="partycontroller">
 	<div class="container">
+		<p class="pertyIndex">{{party.startdate|date:'dd/MM/yyyy - h:mma'}}</p>
 		<img style="width: 100%;height: 200px" src="{{party.banner}}">
 		<p>{{party.title}}</p>
 		<p>{{party.location}}</p>
@@ -75,7 +76,7 @@
 		<div class="devide"></div>
 
 		<div class="container">
-			<h1>Near You</h1>
+			<h1>Near By</h1>
 			<ul class="cardList">
 				<li class="card" ng-repeat="card in nearyou track by $index">
 					

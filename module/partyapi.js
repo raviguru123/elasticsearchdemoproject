@@ -26,37 +26,57 @@ let getpartise=function(data){
 
 let recommended=function(data){
 	return new Promise(function(resolve,reject){
+		let dataquery=data.title+" "+data.genre;
+		console.log("dataquery",dataquery);
+		let geo=data.geo||[];
 		let query,body={};
 		query={
 			"bool": {
-				"must": [
+				"should": [
 				{
 					"multi_match": {
-						"query": data.title,
+						"type": "most_fields",
+						"query":dataquery,
 						"fields": [
-						"title"
+						"title","genre"
 						]
 					}
 				}
 				],
-				"filter": {
+				"must_not":[{
+					"match":{
+						"_key":data._key
+					}
+				}],
+				"filter": [
+				{
 					"range": {
 						"startdate": {
 							"gte": new Date().getTime()
 						}
 					}
+				},
+				{
+					"geo_distance": {
+						"distance": "100km",
+						"geo": {
+							"lon":geo[0],
+							"lat": geo[1]
+						}
+					}
 				}
+				]
 			}
 		}
+
 		body.query=query;
-		body.from=1;
 		executepartysearch(body)
 		.then(result=>{
 			resolve(parsedata(result));
 		}).catch(err=>{
 			reject(err);
 		})
-		
+
 	})
 
 }
@@ -72,6 +92,11 @@ let nearyou=function(data){
 				"must": [
 				{"match_all": {}}
 				],
+				"must_not":[{
+					"match":{
+						"_key":data._key
+					}
+				}],
 				"filter": {
 					"range": {
 						"startdate": {
@@ -95,7 +120,6 @@ let nearyou=function(data){
 			}
 		}
 		];
-		body.from=1;
 		executepartysearch(body)
 		.then(result=>{
 			result=parsedata(result);

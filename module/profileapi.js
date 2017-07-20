@@ -10,7 +10,6 @@ let getprofile=function(data){
 		executeprofilesearch(body)
 		.then(result1=>{
 			result1=result1[0]._source||{};
-			console.log("result1",result1);
 			profile.profile=result1;
 			return Promise.all([recommended(result1),nearyou(result1)]);
 		}).then(([result2,result3])=>{
@@ -27,17 +26,44 @@ let getprofile=function(data){
 
 let recommended=function(data){
 	return new Promise(function(resolve,reject){
+		let geo=data.geo||[];
 		let query,body={};
+		let dataquery=data.profile_type+" "+data.name+" "+data.genre+" "+data.location+" "+data.address;
+		console.log("dataquery",dataquery);
+		
 		query={
-			"multi_match": {
-				"query": data.name,
-				"fields": [
-				"name"
+			"bool": {
+				"should": [
+				{
+					"multi_match": {
+						"type": "most_fields",
+						"query":dataquery,
+						"fields": [
+						"profile_type^5","name","genre","location","address"
+						]
+					}
+				}
+				],
+				"must_not":[{
+					"match":{
+						"_key":data._key
+					}
+				}],
+				"filter": [
+				{
+					"geo_distance": {
+						"distance": "100km",
+						"geo": {
+							"lon":geo[0],
+							"lat": geo[1]
+						}
+					}
+				}
 				]
 			}
 		}
+
 		body.query=query;
-		body.from=1;
 		executeprofilesearch(body)
 		.then(result=>{
 			resolve(parsedata(result));
@@ -56,9 +82,23 @@ let nearyou=function(data){
 		data.geo=data.geo||[];
 		let query,body={};
 		query={
-			"match_all": {}
-		};
+			"bool": {
+				"must": [
+				{
+					"match_phrase": {
+						"profile_type":data.profile_type
+					}
+				}
+				],
+				"must_not":[{
+					"match":{
+						"_key":data._key
+					}
+				}]
+			}
+		}
 
+		console.log("query",query);
 		body.query=query;
 		body.sort= [
 		{
@@ -73,7 +113,6 @@ let nearyou=function(data){
 			}
 		}
 		];
-		body.from=1;
 		executeprofilesearch(body)
 		.then(result=>{
 			result=parsedata(result);
