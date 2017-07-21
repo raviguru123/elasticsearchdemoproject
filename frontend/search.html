@@ -35,6 +35,14 @@
 			padding: 5px;
 			font-weight: bold;
 		}
+
+		.pertyIndex1{
+			background: black;
+			color: white;
+			position: absolute;
+			margin-top:106px;
+			font-weight: bold;
+		}
 	</style>
 
 
@@ -127,10 +135,12 @@
 	<li class="card" ng-repeat="card in cards track by $index">
 
 		<p class="pertyIndex">{{card._source.profile_type==undefined?(card._source.startdate|date:'dd/MM/yyyy - h:mma'):card._source.profile_type}}</p>
+		
 		<a  target="_blank" ng-href="{{card._source.profile_type==undefined ? './party.html?id='+card._id:'./profile.html?id='+card._id}}" class="card-href">
+			<p class="pertyIndex1">{{(card._source.title||card._source.name)|limitTo:36}}</p>
 			<img class="card-img" src="{{card._source.banner||card._source.cover}}"/>
-
 		</a>
+
 	</li>
 </ul>
 
