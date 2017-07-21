@@ -1,6 +1,6 @@
 var app=angular.module("myapp",["ngMaterial"]);
-app.controller('searchController', ['$timeout','$rootScope', '$q', '$log','$scope','httpService','$location','$httpParamSerializer',
-	function($timeout,$rootScope, $q, $log,$scope,httpService,$location,$httpParamSerializer){
+app.controller('searchController', ['$timeout','$rootScope','$window','$q', '$log','$scope','httpService','$location','$httpParamSerializer',
+	function($timeout,$rootScope, $window,$q, $log,$scope,httpService,$location,$httpParamSerializer){
 		let _scroll_id;
 		
 		$scope.getdataService=function(data){
@@ -45,7 +45,7 @@ app.controller('searchController', ['$timeout','$rootScope', '$q', '$log','$scop
 			$scope.cards = []; 
 			$scope.page = 0; 
 			$scope.allResults = false;
-			$scope.searchobj=$location.search();
+			$scope.searchobj=Object.assign(JSON.parse($window.sessionStorage.getItem("locationinfo")),$location.search());
 			$scope.selectedItem=$scope.searchobj.text;
 
 			this.preparedata=function(){
@@ -54,7 +54,6 @@ app.controller('searchController', ['$timeout','$rootScope', '$q', '$log','$scop
 					let datearr=data.startdate.split("/");
 					data.startdate=new Date(datearr[1]+"/"+datearr[0]+"/"+datearr[2]).getTime();
 				}
-				
 				return data;
 			}
 
@@ -69,20 +68,21 @@ app.controller('searchController', ['$timeout','$rootScope', '$q', '$log','$scop
 
 		
 
-		$scope.$watch("searchobj",function(newvalue,oldvalue,scope){
-			if(newvalue!=oldvalue){
-				scope.searchobj=newvalue;
-				$location.search($httpParamSerializer($scope.searchobj));
-			}
-		},true)
-
 
 		
 		let init=new initsearch();
-
 		$scope.$on("$locationChangeStart",function(){
 			init.search();
-		});	
+		});
+
+
+		$scope.$watch("searchobj",function(newvalue,oldvalue,$scope){
+			if(newvalue!=oldvalue){
+				$scope.searchobj=newvalue;
+				$location.search($httpParamSerializer($scope.searchobj));
+			}
+		},true);
+
 
 
 		$scope.loadMore = function() {
@@ -186,8 +186,9 @@ app.directive("googleLocationAutocomplete",function($window){
 							$scope.geoLat=latitude;
 							$scope.geoLon=longitude;
 						});
-
-					}else{
+						
+					}
+					else{
 						alert("Geocode was not successful for the following reason: " + status);
 					}
 				});
@@ -231,11 +232,6 @@ app.directive("locationDetector",function(){
 		}
 	}
 })
-
-
-
-
-
 
 
 app.factory('httpService', ['$http','$q','$httpParamSerializer',
@@ -288,17 +284,14 @@ app.directive("scrollDirective",function($rootScope,$window){
 	return {
 		restrict:'EA',
 		link: function(scope, elem, attrs) {
-
 			$window = angular.element($window);
 			scrollEnabled=true;
 			scrollDistance = 0;
-			
 			if (attrs.infiniteScrollDistance != null) {
 				scope.$watch(attrs.infiniteScrollDistance, function(value) {
 					return scrollDistance = parseInt(value, 10);
 				});
 			}
-
 			handler = function() {
 				var elementBottom, remaining, shouldScroll, windowBottom;
 				windowBottom = $window.height() + $window.scrollTop();

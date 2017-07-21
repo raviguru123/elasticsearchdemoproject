@@ -79,7 +79,7 @@
 </head>
 <body ng-controller="searchController" date-picker>
 
-	<div ng-controller="searchController" layout="column" ng-cloak>
+	<div layout="column" ng-cloak>
 		<md-content class="md-padding">
 			<form ng-submit="$event.preventDefault()">
 				<md-autocomplete
@@ -109,7 +109,7 @@
 
  <hr/>
  <div class="container">
- 	<input ng-model="searchobj.location" geo-lat="searchobj.lat" geo-lon="searchobj.lon" type="text"   id="txtautocomplete"  placeholder="location autocomplete" google-location-autocomplete>
+ 	<input ng-model="address" geo-lat="searchobj.lat" geo-lon="searchobj.lon" type="text"   id="txtautocomplete"  placeholder="location autocomplete" google-location-autocomplete>
  	<input  ng-model="searchobj.startdate" name="date" type="text" class="datepicker" ng-model='filterobj.date'  placeholder="OR SELECT DATE"/>	
  </div>
  <hr/>
