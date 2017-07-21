@@ -38,6 +38,16 @@ let searchscroll=function(body,index,types){
 }
 
 
+let getDocumentbyid=function(index,type,id){
+	client.get({
+		index:index,
+		type:type,
+		id:id
+	}, function(err, data) {
+		console.log('json reply received');
+	});
+}
+
 
 let scroll=function(data){
 	return new Promise(function(resolve,reject){
@@ -59,6 +69,7 @@ let scroll=function(data){
 
 
 module.exports={
+	getDocumentbyid,
 	searchexecute,
 	searchscroll,
 	scroll

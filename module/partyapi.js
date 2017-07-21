@@ -7,7 +7,7 @@ let getpartise=function(data){
 		let party={};
 		query.match={"_id":data.id};
 		body.query=query;
-		executepartysearch(body)
+		executepartysearch(body,"searchexecute")
 		.then(result1=>{
 			result1=result1[0]._source||{};
 			party.party=result1;
@@ -71,7 +71,7 @@ let recommended=function(data){
 		}
 
 		body.query=query;
-		executepartysearch(body)
+		executepartysearch(body,"searchexecute")
 		.then(result=>{
 			resolve(parsedata(result));
 		}).catch(err=>{
@@ -121,7 +121,7 @@ let nearyou=function(data){
 			}
 		}
 		];
-		executepartysearch(body)
+		executepartysearch(body,"searchexecute")
 		.then(result=>{
 			result=parsedata(result);
 			result=result.map(function(item){
@@ -138,9 +138,9 @@ let nearyou=function(data){
 }
 
 
-let executepartysearch=function(body){
+let executepartysearch=function(body,fn){
 	return new Promise(function(resolve,reject){
-		EXECUTEQUERY.searchexecute(body,"goparties_search","party")
+		EXECUTEQUERY[fn](body,"goparties_search","party")
 		.then(result=>{
 			result=result.hits||{};
 			result=result.hits||{};

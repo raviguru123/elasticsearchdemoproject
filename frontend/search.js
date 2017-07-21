@@ -1,6 +1,6 @@
-var app=angular.module("search.module",["ngMaterial"]);
-app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpService','$location','$httpParamSerializer',
-	function($timeout, $q, $log,$scope,httpService,$location,$httpParamSerializer){
+var app=angular.module("myapp",["ngMaterial"]);
+app.controller('searchController', ['$timeout','$rootScope', '$q', '$log','$scope','httpService','$location','$httpParamSerializer',
+	function($timeout,$rootScope, $q, $log,$scope,httpService,$location,$httpParamSerializer){
 		let _scroll_id;
 		
 		$scope.getdataService=function(data){
@@ -10,7 +10,6 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 				$scope.parse(results);
 			});
 		}
-
 
 		$scope.scrollrequest=function(scroll){
 			var obj={};
@@ -50,11 +49,13 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 			$scope.selectedItem=$scope.searchobj.text;
 
 			this.preparedata=function(){
-				var date=Object.assign({},$scope.searchobj);
-				console.log("date.startdate",date.startdate);
-				let datearr=date.startdate.split("/");
-				date.startdate=new Date(datearr[1]+"/"+datearr[0]+"/"+datearr[2]).getTime();
-				return date;
+				var data=Object.assign({},$scope.searchobj);
+				if(data.startdate!=undefined){
+					let datearr=data.startdate.split("/");
+					data.startdate=new Date(datearr[1]+"/"+datearr[0]+"/"+datearr[2]).getTime();
+				}
+				
+				return data;
 			}
 
 			this.search=function(){
@@ -71,7 +72,6 @@ app.controller('searchController', ['$timeout', '$q', '$log','$scope','httpServi
 		$scope.$watch("searchobj",function(newvalue,oldvalue,scope){
 			if(newvalue!=oldvalue){
 				scope.searchobj=newvalue;
-				console.log("value change");
 				$location.search($httpParamSerializer($scope.searchobj));
 			}
 		},true)
@@ -200,7 +200,37 @@ app.directive("googleLocationAutocomplete",function($window){
 
 
 
+app.directive("locationDetector",function(){
+	return {
+		scope:false,
+		link:function(scope,attr,element){
+			let location=undefined;
 
+			function ip_callback(callback){
+				if(location==undefined){
+					var url="http://freegeoip.net/json/"+myip;
+					var xmlHttp=new XMLHttpRequest();
+					xmlHttp.onreadystatechange=function(){
+						if(xmlHttp.readyState==4 && xmlHttp.status==200){
+							callback(xmlHttp.responseText);
+						}
+					}
+					xmlHttp.open('GET',url,true);
+					xmlHttp.send(null);
+				}
+			}
+
+			ip_callback(function(obj){
+				obj=JSON.parse(obj);
+				location={};
+				location.address=obj.city+","+obj.region_name+","+obj.country_name;
+				location.lat=obj.latitude;
+				location.lon=obj.longitude;
+				sessionStorage.setItem("locationinfo",JSON.stringify(location));
+			});
+		}
+	}
+})
 
 
 

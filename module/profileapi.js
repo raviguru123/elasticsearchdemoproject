@@ -7,7 +7,7 @@ let getprofile=function(data){
 		let profile={};
 		query.match={"_id":data.id};
 		body.query=query;
-		executeprofilesearch(body)
+		executeprofilesearch(body,"searchexecute")
 		.then(result1=>{
 			result1=result1[0]._source||{};
 			profile.profile=result1;
@@ -64,7 +64,7 @@ let recommended=function(data){
 		}
 
 		body.query=query;
-		executeprofilesearch(body)
+		executeprofilesearch(body,"searchexecute")
 		.then(result=>{
 			resolve(parsedata(result));
 		}).catch(err=>{
@@ -113,7 +113,7 @@ let nearyou=function(data){
 			}
 		}
 		];
-		executeprofilesearch(body)
+		executeprofilesearch(body,"searchexecute")
 		.then(result=>{
 			result=parsedata(result);
 			result=result.map(function(item){
@@ -130,9 +130,9 @@ let nearyou=function(data){
 }
 
 
-let executeprofilesearch=function(body){
+let executeprofilesearch=function(body,fn){
 	return new Promise(function(resolve,reject){
-		EXECUTEQUERY.searchexecute(body,"goparties_search","profile")
+		EXECUTEQUERY[fn](body,"goparties_search","profile")
 		.then(result=>{
 			result=result.hits||{};
 			result=result.hits||{};

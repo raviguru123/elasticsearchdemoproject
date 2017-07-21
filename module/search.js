@@ -82,7 +82,7 @@ let getdata=function(data){
 			}
 
 			body.query=query;
-			executepartysearchscroll(body,"goparties_search",data.type)
+			executesearchquery(body,"goparties_search",data.type,"searchscroll")
 			.then(result=>{
 				resolve(result);
 			}).catch(err=>{
@@ -229,7 +229,7 @@ let autocomplete=function(data){
 
 		body.query=query;
 
-		executepartysearch(body,"goparties_search","party,profile")
+		executesearchquery(body,"goparties_search","party,profile","searchexecute")
 		.then(result1=>{
 			return preparedata(result1.hits.hits)
 		}).then(result2=>{
@@ -275,23 +275,9 @@ function preparedata(data){
 }
 
 
-
-
-let executepartysearch=function(body,index,type){
+let executesearchquery=function(body,index,type,fn){
 	return new Promise(function(resolve,reject){
-		EXECUTEQUERY.searchexecute(body,index,type)
-		.then(result=>{
-			resolve(result);
-		}).catch(err=>{
-			reject(err);
-		})
-	});
-}
-
-
-let executepartysearchscroll=function(body,index,type){
-	return new Promise(function(resolve,reject){
-		EXECUTEQUERY.searchscroll(body,index,type)
+		EXECUTEQUERY[fn](body,index,type)
 		.then(result=>{
 			resolve(result);
 		}).catch(err=>{
