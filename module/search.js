@@ -13,13 +13,24 @@ let getdata=function(data){
 	if(data.scrollId==undefined){
 		return new Promise(function(resolve,reject){
 			
-			console.log("before search request hit",data);
+			//console.log("before search request hit",data);
+			
 			data.text=data.text||'party';
 			data.type=data.type||'party,profile';
-			data.startdate=data.startdate||new Date().getTime();
-			data.startdate=parseInt(data.startdate, 10);
-			data.enddate=data.startdate+24*60*60*1000;
-			console.log("search request hit",data);
+			
+			console.log("data",data)
+			if(isNaN(parseInt(data.startdate,10))){
+				data.startdate=new Date().getTime();
+				//data.startdate=parseInt(data.startdate, 10);
+				data.enddate=data.startdate+180*24*60*60*1000;
+				
+			}
+			else{
+				data.startdate=parseInt(data.startdate, 10);
+				data.enddate=data.startdate+24*60*60*1000;
+			}
+			
+			
 			let body={},query;
 			query={
 				"bool": {
@@ -76,12 +87,39 @@ let getdata=function(data){
 							}
 							]
 						}
+					},
+					{
+						"geo_distance":{
+							"distance":"100km",
+							"geo":{
+								"lat":data.lat,
+								"lon":data.lon
+							}
+						}
 					}
 					]
 				}
 			}
 
 			body.query=query;
+			if(data.sort=="n"){
+				body.sort= [
+				{
+					"_geo_distance": {
+						"geo": {
+							"lat":data.lat,
+							"lon": data.lon
+						},
+						"order": "asc",
+						"unit": "km",
+						"distance_type": "arc"
+					}
+				}
+				];
+			}
+			
+
+
 			executesearchquery(body,"goparties_search",data.type,"searchscroll")
 			.then(result=>{
 				resolve(result);
