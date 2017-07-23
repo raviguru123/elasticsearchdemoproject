@@ -1,3 +1,4 @@
+"use strict";
 let Database=require("arangojs").Database;
 let localdatabase="http://root:poiqwe@localhost:8529";
 let gopartiesdatabase="http://root:poiqwe@54.169.205.67:8529";

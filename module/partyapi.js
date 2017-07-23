@@ -1,3 +1,4 @@
+"use strict";
 let EXECUTEQUERY=require("../dataAccessLayer/executequery");
 
 let getpartise=function(data){

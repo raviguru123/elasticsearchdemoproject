@@ -1,3 +1,4 @@
+"use strict";
 let esclientobj=require("../elasticsearchConnection");
 
 function bulkexport(data){

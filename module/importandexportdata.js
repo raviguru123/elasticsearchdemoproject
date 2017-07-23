@@ -1,3 +1,4 @@
+"use strict";
 let IMPORTDATA=require("../dataAccessLayer/bulkimport"),
 EXPORTDATA=require("../dataAccessLayer/bulkexport");
 

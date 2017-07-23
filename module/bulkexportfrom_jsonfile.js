@@ -1,3 +1,5 @@
+"use strict";
+
 let fs=require("fs");
 var dataAccessLayerbulkexport=require("../dataAccessLayer/bulkexport");
 

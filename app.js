@@ -1,10 +1,12 @@
+"use strict";
+
 let bulkexportobj=require("./module/bulkexportfrom_jsonfile"),
 IMPORTANDEXPORTDATA=require("./module/importandexportdata"),
 URL=require("url"),
 QUERYSTRING=require("querystring"),
 SEARCH=require("./module/search"),
 PATRY=require("./module/partyapi"),
-PROFILE=require("./module/profileapi");
+PROFILE=require("./module/profileapi"),
 http=require("http"),
 port=3000;
 

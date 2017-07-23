@@ -1,3 +1,4 @@
+"use strict";
 let EXECUTEQUERY=require("../dataAccessLayer/executequery");
 let search=function(data){
 	return new Promise(function(resolve,reject){
