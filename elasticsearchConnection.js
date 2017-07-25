@@ -1,3 +1,4 @@
+"use strict"
 let Elasticsearch=require("aws-es");
 let elasticsearch = new Elasticsearch({
 	accessKeyId: "AKIAIUPXDVHKZUDTC5IA",
