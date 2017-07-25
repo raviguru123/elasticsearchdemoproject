@@ -7,7 +7,8 @@ app.controller('partycontroller', ['$scope', '$location','$window','httpService'
 
 
 		function getdata(){
-			var url="http://localhost:3000/party?id="+$location.search().id;
+			var baseurl=$window.sessionStorage.getItem("baseurl");
+			var url=baseurl+"/party?id="+$location.search().id;
 			httpService.get(url).then(function(response){
 				response=response.data;
 				console.log("data come from party page response",response);

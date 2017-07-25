@@ -2,7 +2,9 @@ var app=angular.module("myapp",["ngMaterial"]);
 app.controller('searchController', ['$timeout','$rootScope','$window','$q', '$log','$scope','httpService','$location','$httpParamSerializer',
 	function($timeout,$rootScope, $window,$q, $log,$scope,httpService,$location,$httpParamSerializer){
 		let _scroll_id;
-		
+		var baseurl="http://testing.goparties.com:3000";
+		//baseurl="http://localhost:3000";
+		$window.sessionStorage.setItem("baseurl",baseurl);
 		$scope.getdataService=function(data){
 			var obj={};
 			obj=Object.assign({},data);
@@ -234,14 +236,14 @@ app.directive("locationDetector",function(){
 })
 
 
-app.factory('httpService', ['$http','$q','$httpParamSerializer',
-	function($http,$q,$httpParamSerializer){
+app.factory('httpService', ['$http','$window','$q','$httpParamSerializer',
+	function($http,$window,$q,$httpParamSerializer){
 		var obj={};
 		var cache={};
-		
+		var baseurl=$window.sessionStorage.getItem("baseurl");
 		obj.getdata=function(data){
 			var defer=$q.defer();
-			var url="http://localhost:3000/search?"+$httpParamSerializer(data);
+			var url=baseurl+"/search?"+$httpParamSerializer(data);
 			$http.get(url).then(function(response){
 				cache[url]=response.data;
 				defer.resolve(response.data);
@@ -256,7 +258,7 @@ app.factory('httpService', ['$http','$q','$httpParamSerializer',
 			let data={};
 			data.query=query;
 			var defer=$q.defer();
-			var url="http://localhost:3000/autocomplete?"+$httpParamSerializer(data);
+			var url=baseurl+"/autocomplete?"+$httpParamSerializer(data);
 			if(cache[url]==undefined){
 				$http.get(url).then(function(response){
 					cache[url]=response.data;

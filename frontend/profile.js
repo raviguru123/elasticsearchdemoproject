@@ -4,10 +4,12 @@ app.config(['$locationProvider', function($locationProvider) {
 	$locationProvider.html5Mode(true);
 }]);
 
-app.controller('profilecontroller', ['$scope', '$location','$window','httpService',
-	function($scope,$location,$window,httpService){
+app.controller('profilecontroller', ['$scope','$window', '$location','$window','httpService',
+	function($scope,$window,$location,$window,httpService){
 		function getdata(){
-			var url="http://localhost:3000/profile?id="+$location.search().id;
+			var baseurl=$window.sessionStorage.getItem("baseurl");
+			
+			var url=baseurl+"/profile?id="+$location.search().id;
 			httpService.get(url).then(function(response){
 				response=response.data;
 				console.log("data come from party page response",response);

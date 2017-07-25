@@ -149,7 +149,8 @@ let executeprofilesearch=function(body,fn){
 let parsedata=function(data){
 	let arr=[];
 	data.forEach(function(item){
-		let obj=item._source
+		let obj=item._source;
+		let key;
 		for(key in item){
 			if(key!='_source'){
 				obj[key]=item[key]

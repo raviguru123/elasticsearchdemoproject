@@ -28,7 +28,7 @@ let getpartise=function(data){
 let recommended=function(data){
 	return new Promise(function(resolve,reject){
 		let dataquery=data.title+" "+data.genre;
-		console.log("dataquery",dataquery);
+		//console.log("dataquery",dataquery);
 		let geo=data.geo||[];
 		let query,body={};
 		query={
@@ -72,8 +72,11 @@ let recommended=function(data){
 		}
 
 		body.query=query;
+		//console.log("body stringify",JSON.stringify(body));
+		console.log("befire");
 		executepartysearch(body,"searchexecute")
 		.then(result=>{
+			//console.log("result",result.length);
 			resolve(parsedata(result));
 		}).catch(err=>{
 			reject(err);
@@ -143,6 +146,7 @@ let executepartysearch=function(body,fn){
 	return new Promise(function(resolve,reject){
 		EXECUTEQUERY[fn](body,"goparties_search","party")
 		.then(result=>{
+			console.log("hits",result.hits.hits.length);
 			result=result.hits||{};
 			result=result.hits||{};
 			resolve(result);
@@ -155,17 +159,25 @@ let executepartysearch=function(body,fn){
 
 
 let parsedata=function(data){
-	let arr=[];
-	data.forEach(function(item){
-		let obj=item._source
-		for(key in item){
-			if(key!='_source'){
-				obj[key]=item[key]
+	try{
+		let arr=[];
+		console.log("data parse",data.length);
+		data.forEach(function(item){
+			let key;
+			let obj=item._source
+			for(key in item){
+				if(key!='_source'){
+					obj[key]=item[key]
+				}
 			}
-		}
-		arr.push(obj);
-	});
-	return arr;
+			arr.push(obj);
+		});
+		console.log("parser",arr.length);
+		return arr;
+	}
+	catch(e){
+		console.log("error",e);
+	}
 }
 
 
